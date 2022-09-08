@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@comunica/query-sparql": "^2.3.0",
+    "pinia": "^2.0.22",
     "rdf-dereference": "^2.0.0",
     "vue": "^3.2.37",
     "vue-router": "^4.1.2"

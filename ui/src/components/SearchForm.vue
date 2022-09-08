@@ -6,75 +6,10 @@
         v-for="(field, key) in formSetup.form"
         :key="key"
       >
-        <div v-if="field.type === 'dropdown'">
-          <template v-if="key === 'what'">
-            <select
-              :value="what"
-              @change="what = $event.target.value"
-            >
-              <option 
-                value="0"
-              >
-                {{ field.label }}
-              </option>
-              <option
-                v-for="(option, index) in field.options"
-                :key="index"
-                :value="option.value"
-              >
-                {{ option.value }}
-              </option>
-            </select>
-          </template>
-          <template v-if="key === 'who'">
-            en
-            <select
-              :value="who"
-              @change="who = $event.target.value"
-            >
-              <option 
-                value="0"
-              >
-                {{ field.label }}
-              </option>
-              <option
-                v-for="(option, index) in field.options"
-                :key="index"
-                :value="option.value"
-              >
-                {{ option.value }}
-              </option>
-            </select>
-          </template>
-          <template v-if="key === 'where'">
-            in 
-            <select
-              :value="where"
-              @change="where = $event.target.value"
-            >
-              <option 
-                value="0"
-              >
-                {{ field.label }}
-              </option>
-              <option
-                v-for="(option, index) in field.options"
-                :key="index"
-                :value="option.value"
-              >
-                {{ option.value }}
-              </option>
-            </select>
-          </template>
-        </div>
-        <div v-else-if="field.type === 'daterange'">
-          <FormDate 
-            v-model:fromDate="fromDate"
-            v-model:toDate="toDate"
-          />
-        </div>
-      </template>
-      .
+        <ButtonSelectModal
+          :modal-type="field.label"
+        />
+      </template>.
     </fieldset>
     <input type="submit" value="Zoeken" />
   </form>
@@ -83,6 +18,7 @@
 <script setup lang="ts">
   import FormSelect from '@/components/FormSelect.vue';
   import FormDate from '@/components/FormDate.vue';
+  import ButtonSelectModal from '@/components/ButtonSelectModal.vue';
 
   import { ref, computed, onMounted } from 'vue';
 

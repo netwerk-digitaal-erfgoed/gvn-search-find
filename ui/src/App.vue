@@ -18,11 +18,18 @@
   <main>
     <RouterView />
   </main>
+  <SelectModal 
+    :is-visible="modalIsOpen"
+  />
 </template>
 
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
 import Intro from './components/Intro.vue';
+import SelectModal from '@/components/SelectModal.vue';
+import { ref } from 'vue';
+
+let modalIsOpen = ref(false);
 </script>
 
 <style scoped>

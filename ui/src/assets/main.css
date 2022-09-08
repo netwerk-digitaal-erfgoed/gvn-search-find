@@ -3,7 +3,6 @@
 
 #app {
   font-weight: normal;
-  padding: 2rem;
 }
 
 select,
@@ -22,6 +21,10 @@ header,
 main {
   width: 75vw;
   margin: 0 auto;
+}
+
+header {
+  margin-top: 2rem;
 }
 
 p {

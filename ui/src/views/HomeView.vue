@@ -1,10 +1,9 @@
 <template>
   <div>
-    <!--<SearchForm
+    <SearchForm
       :form-setup="formSetup"
-    />-->
+    />
     <!--<SearchResults :results="result" />-->
-    Ik ben op zoek naar informatie over ... Binnenkort!
   </div>
 </template>
 
@@ -13,7 +12,7 @@ import SearchForm from '@/components/SearchForm.vue';
 import SearchResults from '@/components/SearchResults.vue';
 
 import { ref, onMounted } from 'vue';
-import * as mockFormData from '@/static/searchFormData.ts'; 
+import * as mockFormData from '@/static/searchFormData.js'; 
 
 // const result = ref([]);
 const formSetup = ref([]);
