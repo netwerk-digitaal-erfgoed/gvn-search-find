@@ -1,27 +1,16 @@
 <template>
-  <div class="search-results">
+  <div v-if="showResults" class="search-results">
     <h2>Resultaten</h2>
-    <div
-      v-for="(result, index) in results"
-      :key="index"
-      class="search-result-card"
-    >
-      <figure class="search-result-card-image">
-        <img
-        :src="result.image"
-        :alt="result.title">
-      </figure>
-      <div class="search-result-card-body">
-        <h3>{{ result.title }}</h3>
-        <h4>{{ result.creator }}</h4>
-      </div>
+    <div v-for="n in 10" :key="n" class="search-result-card">
+      <div class="search-result-card-image"></div>
+      <div class="search-result-card-body">Resultaat #{{ n }}</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
-  results: Object
+defineProps({
+  showResults: Boolean
 });
 </script>
 
@@ -39,12 +28,15 @@ const props = defineProps({
   padding: 1rem;
   margin-bottom: 1rem;
   display: flex;
+  border: 1px solid var(--vt-c-orange);
 }
 
 .search-result-card-image {
-  max-width: 20%;
+  width: 10rem;
+  height: 10rem;
   height: auto;
   margin-right: 2rem;
+  background: var(--vt-c-orange);
 }
 
 .search-result-card-image img {

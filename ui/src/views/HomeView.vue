@@ -1,9 +1,7 @@
 <template>
   <div>
-    <SearchForm
-      :form-setup="formSetup"
-    />
-    <!--<SearchResults :results="result" />-->
+    <SearchForm :form-setup="formSetup" @show-results="callbackShowResults" />
+    <SearchResults :show-results="showResults" />
   </div>
 </template>
 
@@ -16,6 +14,12 @@ import { ref, onMounted } from 'vue';
 
 const store = searchStore();
 const formSetup = ref({});
+
+const showResults = ref(true);
+
+function callbackShowResults() {
+  showResults.value = true;
+}
 
 onMounted(() => {
   formSetup.value = store.fetchMockData();

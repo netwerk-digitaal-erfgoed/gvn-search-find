@@ -4,10 +4,10 @@ import { defineStore } from 'pinia';
 import * as mockFormData from '@/static/searchFormData.js';
 
 export const searchStore = defineStore('search', () => {
-  let modalIsOpen = ref(false);
-  let modalIsOfType = ref('');
-  let selectedOptions = ref();
-  
+  const modalIsOpen = ref(false);
+  const modalIsOfType = ref('');
+  const selectedOptions = ref([]);
+
   function toggleModal() {
     modalIsOpen.value = modalIsOpen.value === false ? true : false;
   }
@@ -17,12 +17,28 @@ export const searchStore = defineStore('search', () => {
   }
 
   function selectedValues(type: string, selected: Array<string>) {
-    selectedOptions.value = selected;
+    const exists = selectedOptions.value.find((el) => el['type'] === type);
+
+    if (exists) {
+      const remove = selectedOptions.value.filter((el) => el['type'] !== type);
+      remove.push({ type, selected });
+      selectedOptions.value = remove;
+    } else {
+      selectedOptions.value.push({ type, selected });
+    }
   }
 
-  function fetchMockData() {    
+  function fetchMockData() {
     return mockFormData.default;
   }
 
-  return { modalIsOpen, selectedOptions, modalIsOfType, toggleModal, selectedValues, fetchMockData, setModalType }
+  return {
+    modalIsOpen,
+    selectedOptions,
+    modalIsOfType,
+    toggleModal,
+    selectedValues,
+    fetchMockData,
+    setModalType
+  };
 });

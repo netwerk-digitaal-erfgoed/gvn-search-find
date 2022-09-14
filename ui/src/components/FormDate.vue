@@ -14,6 +14,6 @@
 </template>
 
 <script setup>
-defineProps(['fromDate', 'toDate'])
-defineEmits(['update:fromDate', 'update:toDate'])
+defineProps(['fromDate', 'toDate']);
+defineEmits(['update:fromDate', 'update:toDate']);
 </script>

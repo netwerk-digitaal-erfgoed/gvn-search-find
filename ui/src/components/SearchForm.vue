@@ -2,33 +2,26 @@
   <form class="search-form">
     <fieldset>
       {{ startSearch }}
-      <template
-        v-for="(field, key) in formSetup?.form"
-        :key="key"
-      >
+      <template v-for="(field, key) in formSetup?.form" :key="key">
+        {{ field.sentence }}
         <ButtonSelectModal
           :modal-label="field.label"
           :modal-type="key"
-        />
-      </template>.
+        /> </template
+      >.
     </fieldset>
-    <div class="buttons">
-      <input type="submit" value="Zoeken" />
-    </div>    
   </form>
 </template>
 
 <script setup lang="ts">
-  import FormSelect from '@/components/FormSelect.vue';
-  import ButtonSelectModal from '@/components/ButtonSelectModal.vue';
+import { ref } from 'vue';
 
-  import { ref, computed, onMounted } from 'vue';
+import ButtonSelectModal from '@/components/ButtonSelectModal.vue';
+const startSearch = ref('Ik ben op zoek naar informatie over');
 
-  const startSearch = ref('Ik ben op zoek naar informatie over');
-
-  const props = defineProps({
-    formSetup: Object
-  });
+defineProps({
+  formSetup: Object
+});
 </script>
 
 <style scoped>
@@ -42,9 +35,9 @@ fieldset {
   background: #fff;
   padding: 0;
   padding-bottom: 2rem;
-  font-size: 3rem;
   margin-bottom: 2rem;
   position: relative;
+  line-height: 2;
 }
 
 fieldset > div {
@@ -58,6 +51,7 @@ fieldset > div {
 input[type='submit'] {
   background: var(--vt-c-orange);
   font-size: 1rem;
+  font-weight: bold;
   border: 0;
   border-radius: 0.25rem;
   padding: 1rem;

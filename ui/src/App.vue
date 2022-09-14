@@ -11,9 +11,7 @@
   <main>
     <RouterView />
   </main>
-  <SelectModal 
-    :is-visible="modalIsOpen"
-  />
+  <SelectModal :is-visible="modalIsOpen" />
 </template>
 
 <script setup lang="ts">
@@ -26,7 +24,6 @@ const store = searchStore();
 const modalIsOpen = computed(() => {
   return store.modalIsOpen;
 });
-
 </script>
 
 <style scoped>
