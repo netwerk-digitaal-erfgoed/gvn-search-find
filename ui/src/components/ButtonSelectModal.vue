@@ -1,45 +1,37 @@
 <template>
-  <button @click="openModal($event)">{{ modalType }}</button>
+  <div>
+    <button @click="openModal($event, modalType)">{{ selectedOptions ? selectedOptions : modalLabel }}</button>
+  </div>
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import { storeToRefs } from 'pinia';
-  import { searchStore } from '@/store/search.store';
-
-
+  import { searchStore } from '@/stores/search.store';
+  import { computed } from 'vue';
+  
   const store = searchStore();
   const props = defineProps({
-    modalType: String
+    modalLabel: String,
+    modalType: {
+      type: String,
+      required: true
+    }
   });
 
-  function openModal(event: { preventDefault: () => void; }) {
+  function openModal(event: { preventDefault: () => void; }, type: string) {
     event.preventDefault();
-    console.log(typeof store.showModal);
-    store.showModal();
+    store.toggleModal();
+    store.setModalType(type);
   }
+
+  const selectedOptions = computed(() => {
+    const options = store.selectedOptions || [];
+    if (options.length === 1) {
+      return options[0];
+    } else if (options.length === 2) {
+      return options[1];
+    } else if (options.length > 2) {
+      return options.slice(2).join(', ');
+    }
+    return null;
+  });
 </script>
-
-<style scoped>
-  button {
-    background: var(--color-button);
-    font-size: 2rem;
-    border: 0;
-    border-radius: 0.25rem;
-    padding: 0.5rem 1rem;
-    text-transform: uppercase;
-    margin-right: 1rem;
-    cursor: pointer;
-    box-shadow: 5px 10px #888888;
-  }
-
-  button:hover {
-    transition: box-shadow 0.2s;
-    box-shadow: 5px 5px #888888;
-  }
-
-  button:focus {
-    transform: scale(0.98);
-    box-shadow: 5px 5px #888888;
-  }
-</style>

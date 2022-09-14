@@ -3,31 +3,28 @@
     <fieldset>
       {{ startSearch }}
       <template
-        v-for="(field, key) in formSetup.form"
+        v-for="(field, key) in formSetup?.form"
         :key="key"
       >
         <ButtonSelectModal
-          :modal-type="field.label"
+          :modal-label="field.label"
+          :modal-type="key"
         />
       </template>.
     </fieldset>
-    <input type="submit" value="Zoeken" />
+    <div class="buttons">
+      <input type="submit" value="Zoeken" />
+    </div>    
   </form>
 </template>
 
 <script setup lang="ts">
   import FormSelect from '@/components/FormSelect.vue';
-  import FormDate from '@/components/FormDate.vue';
   import ButtonSelectModal from '@/components/ButtonSelectModal.vue';
 
   import { ref, computed, onMounted } from 'vue';
 
   const startSearch = ref('Ik ben op zoek naar informatie over');
-  const what = ref(0);
-  const who = ref(0);
-  const where = ref(0);
-  const fromDate = ref('');
-  const toDate = ref('');
 
   const props = defineProps({
     formSetup: Object
@@ -43,7 +40,7 @@
 fieldset {
   border: 0;
   background: #fff;
-  padding: 1rem;
+  padding: 0;
   padding-bottom: 2rem;
   font-size: 3rem;
   margin-bottom: 2rem;
@@ -54,15 +51,16 @@ fieldset > div {
   display: inline-block;
 }
 
+.buttons {
+  text-align: right;
+}
+
 input[type='submit'] {
-  background: var(--color-button);
-  font-size: 2rem;
+  background: var(--vt-c-orange);
+  font-size: 1rem;
   border: 0;
   border-radius: 0.25rem;
-  padding: 0.5rem 1rem;
-  text-transform: uppercase;
-  position: absolute;
-  right: 2rem;
-  bottom: -2rem;
+  padding: 1rem;
+  margin: 0;
 }
 </style>

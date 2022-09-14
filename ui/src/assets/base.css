@@ -11,7 +11,7 @@
 /* semantic color variables for this project */
 :root {
   --color-background: var(--vt-c-white);
-  --color-button: var(--vt-c-orange);
+  --color-button: var(--vt-c-brown-soft);
   --color-text: var(--vt-c-dark-blue);
 }
 

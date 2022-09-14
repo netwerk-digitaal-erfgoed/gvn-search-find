@@ -7,13 +7,6 @@
       width="125"
       height="125"
     />
-    <!--<Intro /> -->
-    <!--<div class="wrapper">
-      <nav>
-        <RouterLink to="/">Erfgoedzoeker</RouterLink>
-        <RouterLink to="/search-filters">Zoeken met filters</RouterLink>
-      </nav>
-    </div>-->
   </header>
   <main>
     <RouterView />
@@ -24,12 +17,16 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router';
-import Intro from './components/Intro.vue';
+import { RouterView } from 'vue-router';
 import SelectModal from '@/components/SelectModal.vue';
-import { ref } from 'vue';
+import { searchStore } from '@/stores/search.store';
+import { computed } from 'vue';
 
-let modalIsOpen = ref(false);
+const store = searchStore();
+const modalIsOpen = computed(() => {
+  return store.modalIsOpen;
+});
+
 </script>
 
 <style scoped>
