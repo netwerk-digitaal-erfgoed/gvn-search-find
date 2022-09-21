@@ -6,6 +6,7 @@ import * as mockFormData from '@/static/searchFormData.js';
 export const searchStore = defineStore('search', () => {
   const modalIsOpen = ref(false);
   const modalIsOfType = ref('');
+  const toggleCopyrightValue = ref(0);
   const selectedOptions = ref([]);
 
   function toggleModal() {
@@ -28,6 +29,15 @@ export const searchStore = defineStore('search', () => {
     }
   }
 
+  function resetForm() {
+    selectedOptions.value = [];
+    toggleCopyrightValue.value = 0;
+  }
+
+  function toggleCopyright(toggle: number) {
+    toggleCopyrightValue.value = toggle;
+  }
+
   function fetchMockData() {
     return mockFormData.default;
   }
@@ -36,9 +46,12 @@ export const searchStore = defineStore('search', () => {
     modalIsOpen,
     selectedOptions,
     modalIsOfType,
+    toggleCopyrightValue,
     toggleModal,
     selectedValues,
     fetchMockData,
-    setModalType
+    setModalType,
+    toggleCopyright,
+    resetForm
   };
 });

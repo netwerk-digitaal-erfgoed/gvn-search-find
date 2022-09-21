@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="openModal($event, modalType)">
+    <button @click.prevent="openModal(modalType)">
       {{ selectedOptions ? selectedOptions : modalLabel }}
     </button>
   </div>
@@ -19,8 +19,7 @@ const props = defineProps({
   }
 });
 
-function openModal(event: { preventDefault: () => void }, type: string) {
-  event.preventDefault();
+function openModal(type: string) {
   store.toggleModal();
   store.setModalType(type);
 }

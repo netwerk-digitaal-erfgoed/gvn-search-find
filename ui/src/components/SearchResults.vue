@@ -1,6 +1,6 @@
 <template>
   <div v-if="showResults" class="search-results">
-    <h2>Resultaten</h2>
+    <h2>10 resultaten</h2>
     <div v-for="n in 10" :key="n" class="search-result-card">
       <div class="search-result-card-image"></div>
       <div class="search-result-card-body">Resultaat #{{ n }}</div>

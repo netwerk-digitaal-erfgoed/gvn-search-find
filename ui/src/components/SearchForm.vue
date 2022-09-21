@@ -1,7 +1,12 @@
 <template>
   <form class="search-form">
     <fieldset>
-      {{ startSearch }}
+      Ik ben op zoek naar
+      <ToggleButton
+        :toggle-options="['Alle', 'Rechtenvrije']"
+        :pressed="store.toggleCopyrightValue"
+      />
+      informatie over
       <template v-for="(field, key) in formSetup?.form" :key="key">
         {{ field.sentence }}
         <ButtonSelectModal
@@ -10,18 +15,28 @@
         /> </template
       >.
     </fieldset>
+    <fieldset>
+      <button @click.prevent="resetSearch">Begin opnieuw</button>
+    </fieldset>
   </form>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 
+import ToggleButton from '@/components/ToggleButton.vue';
 import ButtonSelectModal from '@/components/ButtonSelectModal.vue';
-const startSearch = ref('Ik ben op zoek naar informatie over');
+import { searchStore } from '@/stores/search.store';
+
+const store = searchStore();
 
 defineProps({
   formSetup: Object
 });
+
+function resetSearch() {
+  store.resetForm();
+}
 </script>
 
 <style scoped>
@@ -37,7 +52,7 @@ fieldset {
   padding-bottom: 2rem;
   margin-bottom: 2rem;
   position: relative;
-  line-height: 2;
+  line-height: 2.25;
 }
 
 fieldset > div {
