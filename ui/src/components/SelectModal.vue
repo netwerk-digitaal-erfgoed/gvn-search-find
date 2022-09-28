@@ -34,9 +34,9 @@
           </template>
         </template>
       </template>
-      <AutoSuggest
+      <!--<AutoSuggest
         :options="options"
-      />
+      />-->
       <div class="buttons">
         <button class="submit" @click="closeModal">Ok!</button>
       </div>
@@ -119,13 +119,14 @@ onUpdated(() => {
   top: calc(50vh - 150px);
   left: 25vw;
   width: 50vw;
-  height: 300px;
+  height: 400px;
   z-index: 1;
   padding: 2rem;
+  overflow: auto;
 }
 
 .buttons {
-  margin-top: 4rem;
+  margin-top: 2rem;
 }
 
 button {

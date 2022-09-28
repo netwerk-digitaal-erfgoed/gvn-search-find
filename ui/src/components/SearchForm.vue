@@ -1,5 +1,42 @@
 <template>
-  <form class="search-form">
+  <form class="search-form" v-if="variant==='traditional'">
+    <ToggleButton
+      :toggle-options="['Alles', 'Rechtenvrij']"
+      :pressed="store.toggleCopyrightValue"
+    />
+    <select>
+      <option>Selecteer een instelling</option>
+      <option>Het Utrechts Archief</option>
+      <option>Koninklijke Bibliotheek</option>
+      <option>Stadsarchief Amsterdam</option>
+      <option>Zuiderzee Museum</option>
+    </select>
+    <select>
+      <option>Selecteer een periode</option>
+      <option>1800</option>
+      <option>18e eeuw</option>
+      <option>jaren 40</option>
+      <option>18 november 1999</option>
+      <option>zonder datum</option>
+    </select>
+    <select>
+      <option>Selecteer een locatie</option>
+      <option>Nederland</option>
+      <option>Noord-Holland</option>
+      <option>Amsterdam</option>
+      <option>Deventer</option>
+      <option>Delft</option>
+    </select>
+    <select>
+      <option>Selecteer een thema</option>
+      <option>Kunst</option>
+      <option>Sport</option>
+      <option>Mode</option>
+      <option>Flora en fauna</option>
+      <option>Architectuur</option>
+    </select>
+  </form>
+  <form class="search-form" v-else>
     <fieldset>
       Ik ben op zoek naar
       <ToggleButton
@@ -31,7 +68,8 @@ import { searchStore } from '@/stores/search.store';
 const store = searchStore();
 
 defineProps({
-  formSetup: Object
+  formSetup: Object,
+  variant: String
 });
 
 function resetSearch() {
@@ -71,5 +109,10 @@ input[type='submit'] {
   border-radius: 0.25rem;
   padding: 1rem;
   margin: 0;
+}
+
+select {
+  margin-bottom: 0.5rem;
+  width: 100%;
 }
 </style>

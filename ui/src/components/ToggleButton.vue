@@ -26,6 +26,10 @@
 </script>
 
 <style>
+  .toggle-wrapper {
+    margin-bottom: 0.5rem;
+  }
+
   .toggle-wrapper button:first-child {
     margin-right: 0;
     border-top-right-radius: 0;
