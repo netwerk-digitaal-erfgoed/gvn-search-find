@@ -36,6 +36,24 @@
       <option>Architectuur</option>
     </select>
   </form>
+  <form class="search-form" v-else-if="variant==='mixture'">
+    <label for="query">Ik ben op zoek naar informatie over</label>      
+    <fieldset class="search-field">
+      <input type="text" name="query" id="query" v-model="query" />
+      <input type="submit" value="Zoeken" @click.prevent="handleSubmit"/>
+    </fieldset>
+    <fieldset class="related">Gerelateerd: 
+      <button>Sneaker</button>
+      <button>Slipper</button>
+      <button>Mode</button>
+    </fieldset>
+    <fieldset class="search-select">
+      <FormSelect v-for="(select, index) in mockSelectFormData.default.form" :key="index" :select="select" />
+    </fieldset>
+    <fieldset>
+      <button @click.prevent="resetSearch">Begin opnieuw</button>
+    </fieldset>
+  </form>
   <form class="search-form" v-else>
     <fieldset>
       Ik ben op zoek naar
@@ -62,10 +80,14 @@
 import { ref } from 'vue';
 
 import ToggleButton from '@/components/ToggleButton.vue';
+import FormSelect from '@/components/FormSelect.vue';
 import ButtonSelectModal from '@/components/ButtonSelectModal.vue';
 import { searchStore } from '@/stores/search.store';
 
+import * as mockSelectFormData from '@/static/searchFormSelectData.js';
+
 const store = searchStore();
+const query = ref('');
 
 defineProps({
   formSetup: Object,
@@ -75,6 +97,12 @@ defineProps({
 function resetSearch() {
   store.resetForm();
 }
+
+function handleSubmit() {
+  console.log(mockSelectFormData);
+  console.log('handleSubmit', query.value);
+}
+
 </script>
 
 <style scoped>
@@ -109,6 +137,26 @@ input[type='submit'] {
   border-radius: 0.25rem;
   padding: 1rem;
   margin: 0;
+}
+
+.search-field {
+  border: 1px solid #000;
+  padding: 0.25rem;
+  display: flex;
+  border-radius: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+.search-field input {
+  border: 0;
+  margin-bottom: 0;
+}
+.related button {
+  font-size: 0.85rem;
+}
+
+.search-select {
+  display: flex;
+  flex-wrap: nowrap;
 }
 
 select {
