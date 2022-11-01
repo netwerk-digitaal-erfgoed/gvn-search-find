@@ -1,7 +1,7 @@
 import {Term, Terms} from './terms';
 import {describe, expect, it} from '@jest/globals';
 
-xdescribe('autocomplete', () => {
+describe('autocomplete', () => {
   it('autocompletes', async () => {
     const terms = new Terms();
     const autocompletedTerms = await terms.autocomplete({word: 'klokjes'});
