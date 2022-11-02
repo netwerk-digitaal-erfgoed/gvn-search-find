@@ -2,7 +2,7 @@
   <div v-if="showResults" class="search-results">
     <h2>10 resultaten</h2>
     <div v-for="n in 10" :key="n" class="search-result-card">
-      <div class="search-result-card-image"></div>
+      <div class="search-result-card-image" />
       <div class="search-result-card-body">Resultaat #{{ n }}</div>
     </div>
   </div>
@@ -16,9 +16,9 @@ defineProps({
 
 <style scoped>
 .search-results {
-  width: 100%;
+  width: 75vw;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
   list-style: none;
 }
 

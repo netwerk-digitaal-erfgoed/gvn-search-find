@@ -1,8 +1,7 @@
 <template>
   <div>
-    <SearchForm :form-setup="formSetup" @show-results="callbackShowResults" variant="mixture" />
+    <SearchForm :form-setup="formSetup" @show-results="callbackShowResults" />
     <SearchResults :show-results="showResults" />
-    <div><router-link to="/search">Zoekformulier #2</router-link><br/><br/></div>
   </div>
 </template>
 

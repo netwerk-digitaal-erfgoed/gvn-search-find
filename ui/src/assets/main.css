@@ -17,10 +17,12 @@ input {
   margin-right: 0.5rem;
 }
 
-header,
-main {
-  width: 75vw;
+header, main {
   margin: 0 auto;
+}
+
+header {
+  width: 75vw;
 }
 
 header {

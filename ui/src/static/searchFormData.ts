@@ -12,7 +12,20 @@ export default {
           },
           {
             label: 'Flora',
-            sub: ['Roos', 'Passiebloem', 'Margriet', 'Eik', "Boerenwormkruid", "Guldenroede", "Leverkruid ", "Koninginnekruid", "Duizendblad", "Kattenstaart", "Watermunt", "Hulst"]
+            sub: [
+              'Roos',
+              'Passiebloem',
+              'Margriet',
+              'Eik',
+              'Boerenwormkruid',
+              'Guldenroede',
+              'Leverkruid ',
+              'Koninginnekruid',
+              'Duizendblad',
+              'Kattenstaart',
+              'Watermunt',
+              'Hulst'
+            ]
           },
           {
             label: 'Architectuur',

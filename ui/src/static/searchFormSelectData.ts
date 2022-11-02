@@ -2,7 +2,16 @@ export default {
   form: {
     where: {
       label: 'Locatie',
-      options: ['Noord-Holland', 'Amsterdam', 'Haarlem', 'Alkmaar', 'Hoorn', 'Zuid-Holland', 'Delft', 'Zoetermeer']
+      options: [
+        'Noord-Holland',
+        'Amsterdam',
+        'Haarlem',
+        'Alkmaar',
+        'Hoorn',
+        'Zuid-Holland',
+        'Delft',
+        'Zoetermeer'
+      ]
     },
     when: {
       label: 'Periode',

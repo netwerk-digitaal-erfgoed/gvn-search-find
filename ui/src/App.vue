@@ -4,8 +4,8 @@
       alt="Geheugen van Nederland"
       class="logo"
       src="@/assets/logo.svg"
-      width="125"
-      height="125"
+      width="75"
+      height="75"
     />
   </header>
   <main>
@@ -29,7 +29,7 @@ const modalIsOpen = computed(() => {
 <style scoped>
 .logo {
   display: block;
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
 }
 
 nav {

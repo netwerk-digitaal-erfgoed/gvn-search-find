@@ -1,6 +1,6 @@
 <template>
   <div v-if="isVisible" class="modal-wrapper">
-    <div class="modal-overlay" @click="closeModal()"></div>
+    <div class="modal-overlay" @click="closeModal()" />
     <div class="modal-body">
       <button
         :class="{ selected: selected.slice(-1)[0] === options?.label }"
@@ -34,9 +34,6 @@
           </template>
         </template>
       </template>
-      <!--<AutoSuggest
-        :options="options"
-      />-->
       <div class="buttons">
         <button class="submit" @click="closeModal">Ok!</button>
       </div>
@@ -45,8 +42,6 @@
 </template>
 
 <script setup lang="ts">
-import AutoSuggest from '@/components/AutoSuggest.vue';
-
 import { ref, onUpdated } from 'vue';
 import { searchStore } from '@/stores/search.store';
 
@@ -57,10 +52,7 @@ const options = ref();
 const selected = ref<Array<string>>([]);
 const store = searchStore();
 
-function selectOption(
-  option: string | Array,
-  index: number
-) {
+function selectOption(option: string | Array, index: number) {
   if (option.label && option.sub) {
     selected.value = selected.value.slice(0, index + 1);
     selected.value[index] = option.label;
