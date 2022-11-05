@@ -2,6 +2,13 @@ import {Term, Terms} from './terms';
 import {describe, expect, it} from '@jest/globals';
 
 describe('autocomplete', () => {
+  it('returns a maximum number of entries', async () => {
+    const terms = new Terms();
+    const autocompletedTerms = await terms.autocomplete({word: 'sch'});
+
+    expect(autocompletedTerms.length).toBe(25);
+  });
+
   it('autocompletes on prefLabel', async () => {
     const terms = new Terms();
     const autocompletedTerms = await terms.autocomplete({word: 'vaartuig'});
@@ -38,6 +45,26 @@ describe('autocomplete', () => {
           'watervaartuig',
           'watervaartuigen',
         ],
+      },
+    ]);
+  });
+
+  it('sorts by matching label', async () => {
+    const terms = new Terms();
+    const autocompletedTerms = await terms.autocomplete({word: 'aard'});
+
+    expect(autocompletedTerms).toMatchObject([
+      {
+        id: 'https://data.cultureelerfgoed.nl/term/id/cht/cbf58794-f8b6-4e8b-bbc1-f62dcd450b35',
+        matchingLabel: 'aardoppervlak',
+        prefLabel: 'aardbodem',
+        altLabel: ['aardoppervlak'],
+      },
+      {
+        id: 'https://data.cultureelerfgoed.nl/term/id/cht/68c313ff-2555-423b-b1ed-f61f49a6e517',
+        matchingLabel: 'aardse kijkers',
+        prefLabel: 'aardse kijkers',
+        altLabel: ['aardse kijker', 'refractor', 'refractoren'],
       },
     ]);
   });

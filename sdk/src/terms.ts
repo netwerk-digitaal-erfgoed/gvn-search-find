@@ -25,6 +25,7 @@ type AutocompletedTermFromEndpoint = {
   term: string;
   prefLabel: string;
   altLabel: string;
+  label: string;
 };
 
 export interface GetByIdOptions {
@@ -72,23 +73,11 @@ export class Terms {
         matchingTerm = new AutocompletedTerm();
       }
 
+      matchingTerm.matchingLabel = result.label;
       matchingTerm.id = result.term;
       matchingTerm.prefLabel = result.prefLabel;
       if (result.altLabel) {
         matchingTerm.altLabel.push(result.altLabel);
-      }
-
-      // Determine the label that matched the user's input: prefLabel or altLabel
-      const normalizedPrefLabel = result.prefLabel.trim().toLocaleLowerCase();
-      if (normalizedPrefLabel.startsWith(normalizedWord)) {
-        matchingTerm.matchingLabel = result.prefLabel;
-      } else {
-        if (result.altLabel) {
-          const normalizedAltLabel = result.altLabel.trim().toLocaleLowerCase();
-          if (normalizedAltLabel.startsWith(normalizedWord)) {
-            matchingTerm.matchingLabel = result.altLabel;
-          }
-        }
       }
 
       autocompletedTerms.set(result.term, matchingTerm);
@@ -100,7 +89,10 @@ export class Terms {
       term.altLabel = altLabels;
     });
 
-    return Array.from(autocompletedTerms.values());
+    let autocompletedTermsAsArray = Array.from(autocompletedTerms.values());
+    autocompletedTermsAsArray = autocompletedTermsAsArray.slice(0, 25);
+
+    return autocompletedTermsAsArray;
   }
 
   async getById(options: GetByIdOptions): Promise<Term | undefined> {
