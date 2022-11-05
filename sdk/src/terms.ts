@@ -1,8 +1,13 @@
 import {request} from 'gaxios';
 
 export class BasicTerm {
-  id: string | undefined = undefined;
-  prefLabel: string | undefined = undefined;
+  id: string | undefined;
+  prefLabel: string | undefined;
+}
+
+export class AutocompletedTerm extends BasicTerm {
+  matchingLabel: string | undefined;
+  altLabel: string[] = [];
 }
 
 export class Term extends BasicTerm {
@@ -19,6 +24,7 @@ export interface AutocompleteOptions {
 type AutocompletedTermFromEndpoint = {
   term: string;
   prefLabel: string;
+  altLabel: string;
 };
 
 export interface GetByIdOptions {
@@ -43,25 +49,58 @@ const sortByPrefLabel = (a: BasicTerm, b: BasicTerm) => {
 };
 
 export class Terms {
-  async autocomplete(options: AutocompleteOptions): Promise<BasicTerm[]> {
+  async autocomplete(
+    options: AutocompleteOptions
+  ): Promise<AutocompletedTerm[]> {
     const endpointUrl =
-      'https://api.data.netwerkdigitaalerfgoed.nl/queries/gvn-search-find/terms-autocomplete/run';
+      'https://api.data.netwerkdigitaalerfgoed.nl/queries/gvn-search-find/test/run';
 
+    const normalizedWord = options.word.trim().toLocaleLowerCase();
     const response = await request({
       url: endpointUrl,
       params: {
-        word: options.word,
+        word: normalizedWord,
       },
     });
 
-    const terms = response.data as AutocompletedTermFromEndpoint[];
+    const results = response.data as AutocompletedTermFromEndpoint[];
+    const autocompletedTerms = new Map<string, AutocompletedTerm>();
 
-    return terms.map((term: AutocompletedTermFromEndpoint) => {
-      return {
-        id: term.term,
-        prefLabel: term.prefLabel,
-      };
+    for (const result of results) {
+      let matchingTerm = autocompletedTerms.get(result.term);
+      if (matchingTerm === undefined) {
+        matchingTerm = new AutocompletedTerm();
+      }
+
+      matchingTerm.id = result.term;
+      matchingTerm.prefLabel = result.prefLabel;
+      if (result.altLabel) {
+        matchingTerm.altLabel.push(result.altLabel);
+      }
+
+      // Determine the label that matched the user's input: prefLabel or altLabel
+      const normalizedPrefLabel = result.prefLabel.trim().toLocaleLowerCase();
+      if (normalizedPrefLabel.startsWith(normalizedWord)) {
+        matchingTerm.matchingLabel = result.prefLabel;
+      } else {
+        if (result.altLabel) {
+          const normalizedAltLabel = result.altLabel.trim().toLocaleLowerCase();
+          if (normalizedAltLabel.startsWith(normalizedWord)) {
+            matchingTerm.matchingLabel = result.altLabel;
+          }
+        }
+      }
+
+      autocompletedTerms.set(result.term, matchingTerm);
+    }
+
+    autocompletedTerms.forEach(term => {
+      const altLabels = [...new Set(term.altLabel)]; // Keep unique labels
+      altLabels.sort((a: string, b: string) => a.localeCompare(b));
+      term.altLabel = altLabels;
     });
+
+    return Array.from(autocompletedTerms.values());
   }
 
   async getById(options: GetByIdOptions): Promise<Term | undefined> {

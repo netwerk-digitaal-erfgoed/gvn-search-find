@@ -2,14 +2,42 @@ import {Term, Terms} from './terms';
 import {describe, expect, it} from '@jest/globals';
 
 describe('autocomplete', () => {
-  it('autocompletes', async () => {
+  it('autocompletes on prefLabel', async () => {
     const terms = new Terms();
-    const autocompletedTerms = await terms.autocomplete({word: 'klokjes'});
+    const autocompletedTerms = await terms.autocomplete({word: 'vaartuig'});
 
-    expect(autocompletedTerms).toStrictEqual([
+    expect(autocompletedTerms).toMatchObject([
       {
-        id: 'https://data.cultureelerfgoed.nl/term/id/cht/211658de-fb55-42d0-8c7f-bd9a94c2dc17',
-        prefLabel: 'klokjes',
+        id: 'https://data.cultureelerfgoed.nl/term/id/cht/ffab7ecd-8caa-4191-a63f-ac8ed9258b19',
+        matchingLabel: 'vaartuigen',
+        prefLabel: 'vaartuigen',
+        altLabel: [
+          'schepen',
+          'schip',
+          'vaartuig',
+          'watervaartuig',
+          'watervaartuigen',
+        ],
+      },
+    ]);
+  });
+
+  it('autocompletes on altLabel', async () => {
+    const terms = new Terms();
+    const autocompletedTerms = await terms.autocomplete({word: 'schepen'});
+
+    expect(autocompletedTerms).toMatchObject([
+      {
+        id: 'https://data.cultureelerfgoed.nl/term/id/cht/ffab7ecd-8caa-4191-a63f-ac8ed9258b19',
+        matchingLabel: 'schepen',
+        prefLabel: 'vaartuigen',
+        altLabel: [
+          'schepen',
+          'schip',
+          'vaartuig',
+          'watervaartuig',
+          'watervaartuigen',
+        ],
       },
     ]);
   });
