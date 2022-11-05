@@ -53,7 +53,7 @@ export class Terms {
     options: AutocompleteOptions
   ): Promise<AutocompletedTerm[]> {
     const endpointUrl =
-      'https://api.data.netwerkdigitaalerfgoed.nl/queries/gvn-search-find/test/run';
+      'https://api.data.netwerkdigitaalerfgoed.nl/queries/gvn-search-find/terms-autocomplete-v2/run';
 
     const normalizedWord = options.word.trim().toLocaleLowerCase();
     const response = await request({
