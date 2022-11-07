@@ -1,26 +1,6 @@
 <template>
   <div class="search-form-container">
-    <form v-if="variant === 'browser'" class="search-form">
-      <fieldset>
-        Ik ben op zoek naar
-        <ToggleButton
-          :toggle-options="['Alle', 'Rechtenvrije']"
-          :pressed="store.toggleCopyrightValue"
-        />
-        informatie over
-        <template v-for="(field, key) in formSetup?.form" :key="key">
-          {{ field.sentence }}
-          <ButtonSelectModal
-            :modal-label="field.label"
-            :modal-type="key"
-          /> </template
-        >.
-      </fieldset>
-      <fieldset>
-        <button @click.prevent="resetSearch">Begin opnieuw</button>
-      </fieldset>
-    </form>
-    <form v-else class="search-form">
+    <form class="search-form">
       <fieldset>
         <label for="query">Zoek naar informatie over</label>
         <div class="search-field-wrapper">
@@ -28,12 +8,12 @@
             <vue3-simple-typeahead
               id="searching"
               ref="searchInputRef"
-              placeholder="Voer zoekwoorden in"
-              :item-projection="formatTerms"
+              placeholder="Voer een trefwoord in"
+              :item-projection="returnPrefLabel"
               :items="terms"
               :min-input-length="1"
               @selectItem="selectSearchTerm"
-              @keyup.enter="freeSearchTerm"
+              @onInput="getSuggestions"
             />
             <!--<input type="submit" value="Zoeken" @click.prevent="handleSubmit"/>-->
           </div>
@@ -44,28 +24,44 @@
             :key="index"
             @click.prevent="unselectSearchTerm(term)"
           >
-            <span>{{ term.term }}</span> <span class="remove">x</span>
+            <span>{{ term.prefLabel }}</span> <span class="remove">x</span>
           </button>
         </div>
       </fieldset>
-      <template v-if="relatedTerms.length > 0">
-        <fieldset class="selected-terms">
-          <legend>Ook interessant</legend>
-          <template v-for="(term, index) in relatedTerms" :key="index">
-            <button @click.prevent="selectRelatedTerm(term)">
-              {{ term }}
+      <template v-if="relatedTerms">
+        <fieldset class="selected-terms" v-if="relatedTerms.broader">
+          <template v-for="(term, index) in relatedTerms.broader" :key="index">
+            <legend>Zoek naar alle</legend>
+            <button
+              v-if="term.prefLabel"
+              @click.prevent="selectRelatedTerm(term)"
+            >
+              {{ term.prefLabel }}
+            </button>
+          </template>
+        </fieldset>
+        <fieldset class="selected-terms" v-if="relatedTerms.narrower">
+          <legend>Of verfijn het zoekresultaat</legend>
+          <template v-for="(term, index) in relatedTerms.narrower" :key="index">
+            <button
+              v-if="term.prefLabel"
+              @click.prevent="selectRelatedTerm(term)"
+            >
+              {{ term.prefLabel }}
             </button>
           </template>
         </fieldset>
       </template>
-      <fieldset class="search-select">
+      <!-- 
+        FILTERS
+        <fieldset class="search-select">
         <legend>Filter op</legend>
         <FormSelect
           v-for="(select, index) in mockSelectFormData.default.form"
           :key="index"
           :select="select"
         />
-      </fieldset>
+      </fieldset>-->
       <!--<fieldset>
         <button @click.prevent="resetSearch">Begin opnieuw</button>
       </fieldset>-->
@@ -74,173 +70,112 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
+// import FormSelect from '@/components/FormSelect.vue';
+// import { Terms } from '../../../sdk/src/terms';
 
-import ToggleButton from '@/components/ToggleButton.vue';
-import FormSelect from '@/components/FormSelect.vue';
-import ButtonSelectModal from '@/components/ButtonSelectModal.vue';
-import { searchStore } from '@/stores/search.store';
+import { Terms } from '../../../sdk/build/terms';
 
-import * as mockSelectFormData from '@/static/searchFormSelectData.js';
-
-const store = searchStore();
 const terms = ref([]);
 const selectedTerms = ref([]);
 const searchInputRef = ref([]);
-const relatedTerms = ref([]);
+const relatedTerms = ref({});
+const currentInput = ref('');
 
-const mockedTerms = [
-  {
-    term: 'laarsen',
-    synonyms: ['laars', 'laarzen'],
-    broader: ['schoeisel']
-  },
-  {
-    term: 'pantoffels',
-    synonyms: ['pantoffel', 'slipper', 'slippers'],
-    broader: ['schoeisel']
-  },
-  {
-    term: 'schoenen',
-    synonyms: ['schoen'],
-    broader: ['schoeisel'],
-    narrower: ['pontificaalschoenen', 'schoenhakken', 'zeilschoenen'],
-    related: ['schoenwinkels']
-  },
-  {
-    term: 'sandalen',
-    synonyms: ['sandaal'],
-    broader: ['schoeisel']
-  },
-  {
-    term: 'klompen',
-    synonyms: ['klomp'],
-    broader: ['schoeisel'],
-    narrower: ['Apeldoornse klompen', 'brugwachtersklompen', 'dopjes']
-  }
-];
+const termsFromSDK = new Terms();
 
 defineProps({
   formSetup: Object,
   variant: String
 });
 
-function resetSearch() {
-  store.resetForm();
+const emit = defineEmits(['showResults']);
+
+function returnPrefLabel(item: { id: string; prefLabel: string }) {
+  return item.prefLabel;
 }
 
-function formatTerms(item) {
-  console.log('formatTerms', item);
-  const s = item.synonyms ? `(${item.synonyms.join(', ')})` : '';
-  return `${item.term} ${s}`;
+function removeTermFromList(item: { id: string }) {
+  terms.value = terms.value.filter(
+    (el: { term: string; prefLabel: string }) => {
+      return el.term !== item.id;
+    }
+  );
 }
 
-function sortTerms(
-  listOfTerms: (
-    | {
-        term: string;
-        synonyms: string[];
-        broader: string[];
-        narrower?: undefined;
-        related?: undefined;
-      }
-    | {
-        term: string;
-        synonyms: string[];
-        broader: string[];
-        narrower: string[];
-        related: string[];
-      }
-    | {
-        term: string;
-        synonyms: string[];
-        broader: string[];
-        narrower: string[];
-        related?: undefined;
-      }
-  )[]
-) {
-  terms.value = listOfTerms.sort((a, b) => a.term.localeCompare(b.term));
-}
+function selectSearchTerm(item: { id: string; prefLabel: string }) {
+  selectedTerms.value = [];
 
-function addTerm(item) {
-  terms.value.push(item);
-  sortTerms(terms.value);
-}
-
-function removeTermFromList(item: { term }) {
-  terms.value = terms.value.filter((el) => el.term !== item.term);
-}
-
-function selectSearchTerm(item) {
-  console.log('selectSearchTerm', item);
   if (!selectedTerms.value.includes(item)) {
+    clearSuggestions();
     searchInputRef.value.clearInput();
+
     selectedTerms.value.push(item);
+
     removeTermFromList(item);
     findRelatedTerms();
+
+    emit('showResults', selectedTerms.value);
   }
 }
 
-function unselectSearchTerm(item) {
-  console.log('unselectSearchTerm', item, selectedTerms.value);
+function unselectSearchTerm(item: { id: string; prefLabel: string }) {
   selectedTerms.value = selectedTerms.value.filter(
-    (el) => el.term !== item.term
+    (el: { id: string; prefLabel: string }) => el.id !== item.id
   );
-  addTerm(item);
+  // update related terms?
+  findRelatedTerms();
+
+  // update search results
+  emit('showResults', selectedTerms.value);
 }
 
-function freeSearchTerm() {
-  console.log('freeSearchTerm', searchInputRef.value.input);
-  selectedTerms.value.push({ term: searchInputRef.value.input });
-  searchInputRef.value.clearInput();
+function clearSuggestions() {
+  terms.value = [];
 }
 
 function findRelatedTerms() {
-  console.log('findRelatedTerms', typeof selectedTerms.value);
-  const related = [];
-
-  selectedTerms.value.forEach((el) => {
-    // broader, narrow, and related
-    // todo: rewrite
-    el.broader?.forEach((b) => {
-      related.push(b);
-    });
-
-    el.narrower?.forEach((n) => {
-      related.push(n);
-    });
-
-    el.related?.forEach((r) => {
-      related.push(r);
-    });
+  relatedTerms.value = [];
+  selectedTerms.value.forEach(async (term) => {
+    await termsFromSDK
+      .getById({ id: term.id })
+      .then((result) => {
+        //.log('findRelatedTerms', result);
+        relatedTerms.value = result;
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   });
-
-  let uniqueRelated = [...new Set(related)];
-  uniqueRelated = uniqueRelated.filter((el) => {
-    const isSelected = selectedTerms.value.some((s) => s.term === el);
-    console.log('isSelected', isSelected);
-    return !isSelected ? el : false;
-  });
-  // console.log(uniqueRelated);
-  relatedTerms.value = uniqueRelated;
 }
 
-function selectRelatedTerm(term) {
+function selectRelatedTerm(term: { id: string; prefLabel: string }) {
   console.log('selectRelatedTerm', term);
-  const t = { term: term };
 
-  if (!selectedTerms.value.includes(t)) {
-    selectedTerms.value.push(t);
-    // remove from related
-    relatedTerms.value = relatedTerms.value.filter((el) => el !== term);
-  }
+  // overwrite selectedTerms
+  selectedTerms.value = [];
+  selectedTerms.value.push(term);
+
+  // update related terms?
+  findRelatedTerms();
+
+  // update search results
+  emit('showResults', selectedTerms.value);
 }
 
-onMounted(() => {
-  console.log('mounted');
-  sortTerms(mockedTerms);
-});
+async function getSuggestions(item: { input: string }) {
+  //console.log('getSuggestions');
+  currentInput.value = item.input;
+
+  await termsFromSDK
+    .autocomplete({ word: currentInput.value })
+    .then((result) => {
+      terms.value = result;
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
 </script>
 
 <style scoped>
@@ -302,6 +237,7 @@ input[type='submit'] {
   line-height: 1rem;
   background-color: #fff;
   display: inline-flex;
+  margin-bottom: 0.5rem;
 }
 
 .selected-terms button span.remove {

@@ -11,6 +11,8 @@
 :root {
   --color-background: var(--vt-c-white);
   --color-button: var(--vt-c-brown-soft);
+  --color-button-orange: var(--vt-c-orange);
+  --color-button-white: var(--vt-c-white);
   --color-text: var(--vt-c-dark-blue);
 }
 
