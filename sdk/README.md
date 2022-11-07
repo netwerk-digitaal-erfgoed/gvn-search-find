@@ -36,5 +36,5 @@ const term = await terms.getById({id: 'https://data.cultureelerfgoed.nl/term/id/
 
 ```typescript
 const heritageObjects = new HeritageObjects();
-const result = await heritageObjects.searchByTerm({id: 'https://data.cultureelerfgoed.nl/term/id/cht/211658de-fb55-42d0-8c7f-bd9a94c2dc17'}); // klokjes
+const result = await heritageObjects.searchByTerm({term: 'https://data.cultureelerfgoed.nl/term/id/cht/211658de-fb55-42d0-8c7f-bd9a94c2dc17'}); // returns data of x heritage objects
 ```

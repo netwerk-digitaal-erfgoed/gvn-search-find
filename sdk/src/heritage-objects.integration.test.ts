@@ -33,4 +33,25 @@ describe('searchByTerm', () => {
       ],
     });
   });
+
+  it('returns n results', async () => {
+    const heritageObjects = new HeritageObjects();
+    const result = await heritageObjects.searchByTerm({
+      term: 'https://data.cultureelerfgoed.nl/term/id/cht/3469cfa5-98e8-438e-99c9-d0965b27e2ec',
+      pageSize: 2,
+    });
+
+    expect(result.results.length).toBe(2);
+  });
+
+  it('returns n results from a given page', async () => {
+    const heritageObjects = new HeritageObjects();
+    const result = await heritageObjects.searchByTerm({
+      term: 'https://data.cultureelerfgoed.nl/term/id/cht/3469cfa5-98e8-438e-99c9-d0965b27e2ec',
+      page: 11,
+      pageSize: 1,
+    });
+
+    expect(result.results.length).toBe(1);
+  });
 });

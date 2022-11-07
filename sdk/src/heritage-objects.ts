@@ -2,6 +2,7 @@ import {request} from 'gaxios';
 
 export type SearchResult = {
   results: HeritageObject[];
+  // TBD: add 'totalCount' with number of matching objects?
 };
 
 export type ImageObject = {
@@ -21,6 +22,8 @@ export type HeritageObject = {
 
 export interface SearchByTermOptions {
   term: string;
+  page?: number;
+  pageSize?: number;
 }
 
 type HeritageObjectFromEndpoint = {
@@ -45,6 +48,8 @@ export class HeritageObjects {
       url: endpointUrl,
       params: {
         term: options.term,
+        page: options.page,
+        pageSize: options.pageSize,
       },
     });
 
@@ -55,7 +60,7 @@ export class HeritageObjects {
         return {
           id: heritageObject.heritageObject,
           name: heritageObject.name,
-          additionalType: [heritageObject.additionalType],
+          additionalType: [heritageObject.additionalType], // Only one type remains after searching for a specific term
           publisher: heritageObject.publisher,
           image: {
             contentUrl: heritageObject.imageContentUrl,
