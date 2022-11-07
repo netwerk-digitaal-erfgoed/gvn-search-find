@@ -1,23 +1,42 @@
 import {request} from 'gaxios';
 
-export type SearchResult = {
-  results: HeritageObject[];
+export class SearchResult {
+  results: HeritageObject[] = [];
   // TBD: add 'totalCount' with number of matching objects?
-};
+}
 
-export type ImageObject = {
-  contentUrl: string;
-  encodingFormat?: string;
-  license: string;
-  thumbnail?: ImageObject;
-};
+export class ImageObject {
+  contentUrl: string | undefined;
+  encodingFormat: string | undefined;
+  license: string | undefined;
+  thumbnail: ImageObject | undefined;
+}
 
-export type HeritageObject = {
-  id: string;
+export class HeritageObject {
+  id: string | undefined;
+  name: string | undefined;
+  additionalType: string[] = [];
+  publisher: string | undefined;
+  creator: string[] | undefined;
+  contentLocation: string | undefined;
+  dateCreated: string | undefined; // Not: 'Date'
+  image: ImageObject | undefined;
+}
+
+type HeritageObjectDataFromEndpoint = {
+  heritageObject: string;
+  additionalType: string;
   name: string;
-  additionalType: string[];
   publisher: string;
-  image: ImageObject;
+  creator?: string;
+  contentLocation: string;
+  dateCreated?: string;
+  imageContentUrl: string;
+  imageEncodingFormat?: string;
+  imageLicense: string;
+  thumbnailContentUrl: string;
+  thumbnailEncodingFormat?: string;
+  thumbnailLicense: string;
 };
 
 export interface SearchByTermOptions {
@@ -26,18 +45,9 @@ export interface SearchByTermOptions {
   pageSize?: number;
 }
 
-type HeritageObjectFromEndpoint = {
-  heritageObject: string;
-  additionalType: string;
-  name: string;
-  publisher: string;
-  imageContentUrl: string;
-  imageEncodingFormat?: string;
-  imageLicense: string;
-  thumbnailContentUrl: string;
-  thumbnailEncodingFormat?: string;
-  thumbnailLicense: string;
-};
+export interface GetByIdOptions {
+  id: string;
+}
 
 export class HeritageObjects {
   async searchByTerm(options: SearchByTermOptions): Promise<SearchResult> {
@@ -53,31 +63,105 @@ export class HeritageObjects {
       },
     });
 
-    const heritageObjects = response.data as HeritageObjectFromEndpoint[];
+    const rawHeritageObjects =
+      response.data as HeritageObjectDataFromEndpoint[];
 
-    const results = heritageObjects.map(
-      (heritageObject: HeritageObjectFromEndpoint) => {
-        return {
-          id: heritageObject.heritageObject,
-          name: heritageObject.name,
-          additionalType: [heritageObject.additionalType], // Only one type remains after searching for a specific term
-          publisher: heritageObject.publisher,
-          image: {
-            contentUrl: heritageObject.imageContentUrl,
-            encodingFormat: heritageObject.imageEncodingFormat,
-            license: heritageObject.imageLicense,
-            thumbnail: {
-              contentUrl: heritageObject.thumbnailContentUrl,
-              encodingFormat: heritageObject.thumbnailEncodingFormat,
-              license: heritageObject.thumbnailLicense,
-            },
-          },
-        };
+    const results = rawHeritageObjects.map(
+      (rawHeritageObject: HeritageObjectDataFromEndpoint) => {
+        const heritageObject = new HeritageObject();
+        heritageObject.id = rawHeritageObject.heritageObject;
+        heritageObject.name = rawHeritageObject.name;
+        heritageObject.additionalType = [rawHeritageObject.additionalType]; // Only one type remains after searching for a specific term
+        heritageObject.publisher = rawHeritageObject.publisher;
+        heritageObject.contentLocation = rawHeritageObject.contentLocation;
+
+        // TBD: add creators?
+
+        if (rawHeritageObject.dateCreated !== null) {
+          heritageObject.dateCreated = rawHeritageObject.dateCreated;
+        }
+
+        heritageObject.image = new ImageObject();
+        heritageObject.image.contentUrl = rawHeritageObject.imageContentUrl;
+        heritageObject.image.encodingFormat =
+          rawHeritageObject.imageEncodingFormat;
+        heritageObject.image.license = rawHeritageObject.imageLicense;
+
+        heritageObject.image.thumbnail = new ImageObject();
+        heritageObject.image.thumbnail.contentUrl =
+          rawHeritageObject.thumbnailContentUrl;
+        heritageObject.image.thumbnail.encodingFormat =
+          rawHeritageObject.thumbnailEncodingFormat;
+        heritageObject.image.thumbnail.license =
+          rawHeritageObject.thumbnailLicense;
+
+        return heritageObject;
       }
     );
 
-    return {
-      results,
-    };
+    const searchResult = new SearchResult();
+    searchResult.results = results;
+
+    return searchResult;
+  }
+
+  async getById(options: GetByIdOptions): Promise<HeritageObject | undefined> {
+    const endpointUrl =
+      'https://api.data.netwerkdigitaalerfgoed.nl/queries/gvn-search-find/heritage-object-detail/run';
+
+    const response = await request({
+      url: endpointUrl,
+      params: {
+        heritageObject: options.id,
+      },
+    });
+
+    const results = response.data as HeritageObjectDataFromEndpoint[];
+
+    if (results.length === 0) {
+      return undefined; // Unknown object?
+    }
+
+    const heritageObject = new HeritageObject();
+    const additionalTypes = new Set<string>();
+    const creators = new Set<string>();
+
+    for (const rawHeritageObject of results) {
+      heritageObject.id = rawHeritageObject.heritageObject;
+      heritageObject.name = rawHeritageObject.name;
+      heritageObject.publisher = rawHeritageObject.publisher;
+      heritageObject.contentLocation = rawHeritageObject.contentLocation;
+
+      if (rawHeritageObject.additionalType !== null) {
+        additionalTypes.add(rawHeritageObject.additionalType);
+      }
+
+      if (rawHeritageObject.creator !== null) {
+        creators.add(rawHeritageObject.creator!);
+      }
+
+      if (rawHeritageObject.dateCreated !== null) {
+        heritageObject.dateCreated = rawHeritageObject.dateCreated;
+      }
+
+      heritageObject.image = new ImageObject();
+      heritageObject.image.contentUrl = rawHeritageObject.imageContentUrl;
+      heritageObject.image.encodingFormat =
+        rawHeritageObject.imageEncodingFormat;
+      heritageObject.image.license = rawHeritageObject.imageLicense;
+
+      heritageObject.image.thumbnail = new ImageObject();
+      heritageObject.image.thumbnail.contentUrl =
+        rawHeritageObject.thumbnailContentUrl;
+      heritageObject.image.thumbnail.encodingFormat =
+        rawHeritageObject.thumbnailEncodingFormat;
+      heritageObject.image.thumbnail.license =
+        rawHeritageObject.thumbnailLicense;
+    }
+
+    heritageObject.additionalType = Array.from(additionalTypes);
+    heritageObject.creator = Array.from(creators);
+
+    return heritageObject;
   }
 }
