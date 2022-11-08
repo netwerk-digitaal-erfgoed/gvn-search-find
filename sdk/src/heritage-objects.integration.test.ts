@@ -14,7 +14,7 @@ describe('searchByTerm', () => {
       id: 'http://data.collectienederland.nl/resource/document/museum-rotterdam/http-museumrotterdam.nl-collectie-item-43764-H.1-2',
       name: 'Kartonnen gebruiksaanwijzing van een "Dampf-Inhalations-Apparat" (stoom-inhaleerapparaat)',
       publisher: 'https://museumrotterdam.nl/',
-      contentLocation: 'https://sws.geonames.org/2747891/',
+      contentLocation: ['https://sws.geonames.org/2747891/'],
       dateCreated: '1880',
       additionalType: [
         'https://data.cultureelerfgoed.nl/term/id/cht/00dce1a8-e44a-4472-8558-0a1da2f920fb',
@@ -78,7 +78,7 @@ describe('getById', () => {
       name: '"A.B.C.-Boek, zijnde de eerste tafels van de eerste oefeningen in het lezen", in blauwe omslag',
       publisher: 'https://museumrotterdam.nl/',
       creator: ['De Erven Loosjes'],
-      contentLocation: 'https://sws.geonames.org/2747891/',
+      contentLocation: ['https://sws.geonames.org/2747891/'],
       dateCreated: '1878',
       additionalType: [
         'https://data.cultureelerfgoed.nl/term/id/cht/b2619bd2-0cdc-4fb1-9998-a69d9ab08421',

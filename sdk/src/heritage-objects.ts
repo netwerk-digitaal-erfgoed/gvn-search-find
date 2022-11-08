@@ -15,21 +15,21 @@ export class ImageObject {
 export class HeritageObject {
   id: string | undefined;
   name: string | undefined;
-  additionalType: string[] = [];
+  additionalType: string[] | undefined;
   publisher: string | undefined;
   creator: string[] | undefined;
-  contentLocation: string | undefined;
+  contentLocation: string[] | undefined;
   dateCreated: string | undefined; // Not: 'Date'
   image: ImageObject | undefined;
 }
 
 type HeritageObjectDataFromEndpoint = {
   heritageObject: string;
-  additionalType: string;
+  additionalType?: string;
   name: string;
   publisher: string;
   creator?: string;
-  contentLocation: string;
+  contentLocation?: string;
   dateCreated?: string;
   imageContentUrl: string;
   imageEncodingFormat?: string;
@@ -41,8 +41,8 @@ type HeritageObjectDataFromEndpoint = {
 
 export interface SearchByTermOptions {
   term: string;
-  page?: number;
-  pageSize?: number;
+  page?: number; // Experimental; may not work all the time (unit = triples, not objects)
+  pageSize?: number; // Experimental; may not work all the time (unit = triples, not objects)
 }
 
 export interface GetByIdOptions {
@@ -71,13 +71,24 @@ export class HeritageObjects {
         const heritageObject = new HeritageObject();
         heritageObject.id = rawHeritageObject.heritageObject;
         heritageObject.name = rawHeritageObject.name;
-        heritageObject.additionalType = [rawHeritageObject.additionalType]; // Only one type remains after searching for a specific term
         heritageObject.publisher = rawHeritageObject.publisher;
-        heritageObject.contentLocation = rawHeritageObject.contentLocation;
 
-        // TBD: add creators?
+        // FIXME: multiple types
+        if (rawHeritageObject.additionalType) {
+          heritageObject.additionalType = [rawHeritageObject.additionalType]; // Only one type remains after searching for a specific term
+        }
 
-        if (rawHeritageObject.dateCreated !== null) {
+        // FIXME: multiple content locations
+        if (rawHeritageObject.contentLocation) {
+          heritageObject.contentLocation = [rawHeritageObject.contentLocation];
+        }
+
+        // FIXME: multiple creators
+        if (rawHeritageObject.creator) {
+          heritageObject.creator = [rawHeritageObject.creator];
+        }
+
+        if (rawHeritageObject.dateCreated) {
           heritageObject.dateCreated = rawHeritageObject.dateCreated;
         }
 
@@ -123,6 +134,7 @@ export class HeritageObjects {
     }
 
     const heritageObject = new HeritageObject();
+    const contentLocations = new Set<string>();
     const additionalTypes = new Set<string>();
     const creators = new Set<string>();
 
@@ -130,17 +142,20 @@ export class HeritageObjects {
       heritageObject.id = rawHeritageObject.heritageObject;
       heritageObject.name = rawHeritageObject.name;
       heritageObject.publisher = rawHeritageObject.publisher;
-      heritageObject.contentLocation = rawHeritageObject.contentLocation;
 
-      if (rawHeritageObject.additionalType !== null) {
+      if (rawHeritageObject.additionalType) {
         additionalTypes.add(rawHeritageObject.additionalType);
       }
 
-      if (rawHeritageObject.creator !== null) {
-        creators.add(rawHeritageObject.creator!);
+      if (rawHeritageObject.contentLocation) {
+        contentLocations.add(rawHeritageObject.contentLocation);
       }
 
-      if (rawHeritageObject.dateCreated !== null) {
+      if (rawHeritageObject.creator) {
+        creators.add(rawHeritageObject.creator);
+      }
+
+      if (rawHeritageObject.dateCreated) {
         heritageObject.dateCreated = rawHeritageObject.dateCreated;
       }
 
@@ -160,6 +175,7 @@ export class HeritageObjects {
     }
 
     heritageObject.additionalType = Array.from(additionalTypes);
+    heritageObject.contentLocation = Array.from(contentLocations);
     heritageObject.creator = Array.from(creators);
 
     return heritageObject;
