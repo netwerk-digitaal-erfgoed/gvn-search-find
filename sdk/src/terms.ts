@@ -1,8 +1,13 @@
 import {request} from 'gaxios';
 
 export class BasicTerm {
-  id: string | undefined = undefined;
-  prefLabel: string | undefined = undefined;
+  id: string | undefined;
+  prefLabel: string | undefined;
+}
+
+export class AutocompletedTerm extends BasicTerm {
+  matchingLabel: string | undefined;
+  altLabel: string[] = [];
 }
 
 export class Term extends BasicTerm {
@@ -19,6 +24,8 @@ export interface AutocompleteOptions {
 type AutocompletedTermFromEndpoint = {
   term: string;
   prefLabel: string;
+  altLabel: string;
+  label: string;
 };
 
 export interface GetByIdOptions {
@@ -43,25 +50,49 @@ const sortByPrefLabel = (a: BasicTerm, b: BasicTerm) => {
 };
 
 export class Terms {
-  async autocomplete(options: AutocompleteOptions): Promise<BasicTerm[]> {
+  async autocomplete(
+    options: AutocompleteOptions
+  ): Promise<AutocompletedTerm[]> {
     const endpointUrl =
-      'https://api.data.netwerkdigitaalerfgoed.nl/queries/gvn-search-find/terms-autocomplete/run';
+      'https://api.data.netwerkdigitaalerfgoed.nl/queries/gvn-search-find/terms-autocomplete-v2/run';
 
+    const normalizedWord = options.word.trim().toLocaleLowerCase();
     const response = await request({
       url: endpointUrl,
       params: {
-        word: options.word,
+        word: normalizedWord,
       },
     });
 
-    const terms = response.data as AutocompletedTermFromEndpoint[];
+    const results = response.data as AutocompletedTermFromEndpoint[];
+    const autocompletedTerms = new Map<string, AutocompletedTerm>();
 
-    return terms.map((term: AutocompletedTermFromEndpoint) => {
-      return {
-        id: term.term,
-        prefLabel: term.prefLabel,
-      };
+    for (const rawTerm of results) {
+      let matchingTerm = autocompletedTerms.get(rawTerm.term);
+      if (matchingTerm === undefined) {
+        matchingTerm = new AutocompletedTerm();
+      }
+
+      matchingTerm.matchingLabel = rawTerm.label;
+      matchingTerm.id = rawTerm.term;
+      matchingTerm.prefLabel = rawTerm.prefLabel;
+      if (rawTerm.altLabel) {
+        matchingTerm.altLabel.push(rawTerm.altLabel);
+      }
+
+      autocompletedTerms.set(rawTerm.term, matchingTerm);
+    }
+
+    autocompletedTerms.forEach(term => {
+      const altLabels = [...new Set(term.altLabel)]; // Keep unique labels
+      altLabels.sort((a: string, b: string) => a.localeCompare(b));
+      term.altLabel = altLabels;
     });
+
+    let autocompletedTermsAsArray = Array.from(autocompletedTerms.values());
+    autocompletedTermsAsArray = autocompletedTermsAsArray.slice(0, 25);
+
+    return autocompletedTermsAsArray;
   }
 
   async getById(options: GetByIdOptions): Promise<Term | undefined> {
@@ -87,29 +118,29 @@ export class Terms {
     const broaderTerms = new Map<string, BasicTerm>();
     const narrowerTerms = new Map<string, BasicTerm>();
 
-    for (const result of results) {
-      term.id = result.term;
-      term.prefLabel = result.prefLabel;
+    for (const rawTerm of results) {
+      term.id = rawTerm.term;
+      term.prefLabel = rawTerm.prefLabel;
 
-      if (result.altLabel !== null) {
-        altLabels.add(result.altLabel);
+      if (rawTerm.altLabel !== null) {
+        altLabels.add(rawTerm.altLabel);
       }
 
-      if (result.scopeNote !== null) {
-        scopeNotes.add(result.scopeNote);
+      if (rawTerm.scopeNote !== null) {
+        scopeNotes.add(rawTerm.scopeNote);
       }
 
-      if (result.broaderTerm !== null) {
-        broaderTerms.set(result.broaderTerm, {
-          id: result.broaderTerm,
-          prefLabel: result.broaderTerm_prefLabel,
+      if (rawTerm.broaderTerm !== null) {
+        broaderTerms.set(rawTerm.broaderTerm, {
+          id: rawTerm.broaderTerm,
+          prefLabel: rawTerm.broaderTerm_prefLabel,
         });
       }
 
-      if (result.narrowerTerm !== null) {
-        narrowerTerms.set(result.narrowerTerm, {
-          id: result.narrowerTerm,
-          prefLabel: result.narrowerTerm_prefLabel,
+      if (rawTerm.narrowerTerm !== null) {
+        narrowerTerms.set(rawTerm.narrowerTerm, {
+          id: rawTerm.narrowerTerm,
+          prefLabel: rawTerm.narrowerTerm_prefLabel,
         });
       }
     }

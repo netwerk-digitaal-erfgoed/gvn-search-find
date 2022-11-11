@@ -2,14 +2,69 @@ import {Term, Terms} from './terms';
 import {describe, expect, it} from '@jest/globals';
 
 describe('autocomplete', () => {
-  it('autocompletes', async () => {
+  it('returns a maximum number of entries', async () => {
     const terms = new Terms();
-    const autocompletedTerms = await terms.autocomplete({word: 'klokjes'});
+    const autocompletedTerms = await terms.autocomplete({word: 'sch'});
 
-    expect(autocompletedTerms).toStrictEqual([
+    expect(autocompletedTerms.length).toBe(25);
+  });
+
+  it('autocompletes on prefLabel', async () => {
+    const terms = new Terms();
+    const autocompletedTerms = await terms.autocomplete({word: 'vaartuig'});
+
+    expect(autocompletedTerms).toMatchObject([
       {
-        id: 'https://data.cultureelerfgoed.nl/term/id/cht/211658de-fb55-42d0-8c7f-bd9a94c2dc17',
-        prefLabel: 'klokjes',
+        id: 'https://data.cultureelerfgoed.nl/term/id/cht/ffab7ecd-8caa-4191-a63f-ac8ed9258b19',
+        matchingLabel: 'vaartuigen',
+        prefLabel: 'vaartuigen',
+        altLabel: [
+          'schepen',
+          'schip',
+          'vaartuig',
+          'watervaartuig',
+          'watervaartuigen',
+        ],
+      },
+    ]);
+  });
+
+  it('autocompletes on altLabel', async () => {
+    const terms = new Terms();
+    const autocompletedTerms = await terms.autocomplete({word: 'schepen'});
+
+    expect(autocompletedTerms).toMatchObject([
+      {
+        id: 'https://data.cultureelerfgoed.nl/term/id/cht/ffab7ecd-8caa-4191-a63f-ac8ed9258b19',
+        matchingLabel: 'schepen',
+        prefLabel: 'vaartuigen',
+        altLabel: [
+          'schepen',
+          'schip',
+          'vaartuig',
+          'watervaartuig',
+          'watervaartuigen',
+        ],
+      },
+    ]);
+  });
+
+  it('sorts by matching label', async () => {
+    const terms = new Terms();
+    const autocompletedTerms = await terms.autocomplete({word: 'aard'});
+
+    expect(autocompletedTerms).toMatchObject([
+      {
+        id: 'https://data.cultureelerfgoed.nl/term/id/cht/cbf58794-f8b6-4e8b-bbc1-f62dcd450b35',
+        matchingLabel: 'aardoppervlak',
+        prefLabel: 'aardbodem',
+        altLabel: ['aardoppervlak'],
+      },
+      {
+        id: 'https://data.cultureelerfgoed.nl/term/id/cht/68c313ff-2555-423b-b1ed-f61f49a6e517',
+        matchingLabel: 'aardse kijkers',
+        prefLabel: 'aardse kijkers',
+        altLabel: ['aardse kijker', 'refractor', 'refractoren'],
       },
     ]);
   });
