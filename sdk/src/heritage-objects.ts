@@ -17,6 +17,7 @@ export class HeritageObject {
   name: string | undefined;
   additionalType: string[] | undefined;
   publisher: string | undefined;
+  description: string | undefined;
   creator: string[] | undefined;
   contentLocation: string[] | undefined;
   dateCreated: string | undefined; // Not: 'Date'
@@ -28,6 +29,7 @@ type HeritageObjectDataFromEndpoint = {
   additionalType?: string;
   name: string;
   publisher: string;
+  description?: string;
   creator?: string;
   contentLocation?: string;
   dateCreated?: string;
@@ -72,6 +74,10 @@ export class HeritageObjects {
         heritageObject.id = rawHeritageObject.heritageObject;
         heritageObject.name = rawHeritageObject.name;
         heritageObject.publisher = rawHeritageObject.publisher;
+
+        if (rawHeritageObject.description) {
+          heritageObject.description = rawHeritageObject.description;
+        }
 
         // FIXME: multiple types
         if (rawHeritageObject.additionalType) {
@@ -142,6 +148,10 @@ export class HeritageObjects {
       heritageObject.id = rawHeritageObject.heritageObject;
       heritageObject.name = rawHeritageObject.name;
       heritageObject.publisher = rawHeritageObject.publisher;
+
+      if (rawHeritageObject.description) {
+        heritageObject.description = rawHeritageObject.description;
+      }
 
       if (rawHeritageObject.additionalType) {
         additionalTypes.add(rawHeritageObject.additionalType);
