@@ -11,8 +11,27 @@
           <td>{{ heritageObject.publisher }}</td>
         </tr>
         <tr>
-          <th>Licentie</th>
+          <th>Datum</th>
+          <td>{{ heritageObject.dateCreated }}</td>
+        </tr>
+        <tr>
+          <th>Afgebeelde locatie</th>
+          <td>
+            <span
+              v-for="(location, l) in heritageObject.contentLocation" 
+              :key="l"
+            >
+              {{ location }}
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <th>Licentie media</th>
           <td>{{ heritageObject.image.license }}</td>
+        </tr>
+        <tr>
+          <th>Type media</th>
+          <td>{{ heritageObject.image.encodingFormat }}</td>
         </tr>
       </table>
     </div>
@@ -100,7 +119,7 @@ function backToSearchResults() {
 }
 
 onMounted(() => {
-  console.log(heritageObject.value);
+  console.log(heritageObject.value.id);
   termLookUp(heritageObject.value.additionalType);
 });
 </script>
