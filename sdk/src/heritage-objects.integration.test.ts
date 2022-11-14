@@ -69,29 +69,32 @@ describe('getById', () => {
   it('returns heritage object', async () => {
     const heritageObjects = new HeritageObjects();
     const heritageObject = await heritageObjects.getById({
-      id: 'http://data.collectienederland.nl/resource/document/museum-rotterdam/http-museumrotterdam.nl-collectie-item-31516',
+      id: 'http://data.collectienederland.nl/resource/document/museum-rotterdam/http-museumrotterdam.nl-collectie-item-47240-A-N',
     });
 
     expect(heritageObject).toBeInstanceOf(HeritageObject);
     expect(heritageObject).toMatchObject({
-      id: 'http://data.collectienederland.nl/resource/document/museum-rotterdam/http-museumrotterdam.nl-collectie-item-31516',
-      name: '"A.B.C.-Boek, zijnde de eerste tafels van de eerste oefeningen in het lezen", in blauwe omslag',
+      id: 'http://data.collectienederland.nl/resource/document/museum-rotterdam/http-museumrotterdam.nl-collectie-item-47240-A-N',
+      name: 'Veertien in papier verpakte dubbele stukken Sunlight huishoudzeep, veelkleurig',
       publisher: 'https://museumrotterdam.nl/',
-      creator: ['De Erven Loosjes'],
+      description:
+        'Per twee in papier verpakte, aan elkaar bevestigde, stukken huishoudzeep. Stukken zeep hebben verdiepte bovenkant en onderkant en zijn voorzien van tekst.',
+      creator: ["fabrikant product: Lever's Zeepmaatschappij N.V."],
       contentLocation: ['https://sws.geonames.org/2747891/'],
-      dateCreated: '1878',
+      dateCreated: '1925',
       additionalType: [
-        'https://data.cultureelerfgoed.nl/term/id/cht/b2619bd2-0cdc-4fb1-9998-a69d9ab08421',
-        'https://data.cultureelerfgoed.nl/term/id/cht/9b6df02d-ad77-4274-84be-0f83841a2838',
+        'https://data.cultureelerfgoed.nl/term/id/cht/0a127f93-9c65-44bf-a850-52e7fd34f9b2',
+        'https://data.cultureelerfgoed.nl/term/id/cht/96e58507-631f-4ccd-b0cc-694e3fe7a4a6',
+        'https://data.cultureelerfgoed.nl/term/id/cht/a2a95064-a74d-4752-8765-22ed1c4d4110',
       ],
       image: {
         contentUrl:
-          'http://museumrotterdam.blob.core.windows.net/lowres/31516_2.jpg',
+          'http://museumrotterdam.blob.core.windows.net/lowres/47240-A-N_1.jpg',
         encodingFormat: 'image/jpeg',
         license: 'https://rightsstatements.org/page/InC/1.0/',
         thumbnail: {
           contentUrl:
-            'http://museumrotterdam.blob.core.windows.net/lowres/31516_2.jpg',
+            'http://museumrotterdam.blob.core.windows.net/lowres/47240-A-N_1.jpg',
           encodingFormat: 'image/jpeg',
           license: 'https://rightsstatements.org/page/InC/1.0/',
         },
