@@ -5,7 +5,12 @@
       v-if="searchResults.length > 0"
       :search-results="searchResults"
     />
-    <p v-else class="no-results">Er zijn geen resultaten.</p>
+    <p
+      v-else-if="searchResults.length === 0 && selectedTerm.length > 1"
+      class="no-results"
+    >
+      Er zijn geen resultaten.
+    </p>
   </div>
 </template>
 
@@ -21,24 +26,22 @@ const heritageObjects = new HeritageObjects();
 
 const formSetup = ref({});
 
-const selectedTerms = ref([]);
+const selectedTerm = ref([]);
 const searchResults = ref([]);
 
 async function callbackShowResults(selected: []) {
-  selectedTerms.value = selected;
+  selectedTerm.value = selected;
   searchResults.value = [];
 
   // search
-  selectedTerms.value.forEach(async (term: { id: string }) => {
-    await heritageObjects
-      .searchByTerm({ term: term.id })
-      .then((result) => {
-        searchResults.value = result.results;
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-  });
+  await heritageObjects
+    .searchByTerm({ term: selectedTerm.value.id })
+    .then((result) => {
+      searchResults.value = result.results;
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
 }
 </script>
 

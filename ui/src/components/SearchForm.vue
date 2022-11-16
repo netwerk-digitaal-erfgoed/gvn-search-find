@@ -8,50 +8,55 @@
             <vue3-simple-typeahead
               id="searching"
               ref="searchInputRef"
-              placeholder="Voer een trefwoord in"
-              :item-projection="returnPrefLabel"
+              :placeholder="
+                selectedTerm.length === 0 ? 'Voer een trefwoord in' : ''
+              "
+              :item-projection="returnMatchingLabel"
               :items="terms"
               :min-input-length="1"
-              @selectItem="selectSearchTerm"
+              :disabled="selectedTerm.length > 0 ? true : false"
+              @selectItem="submitSearchTerm"
               @onInput="getSuggestions"
             />
-            <!--<input type="submit" value="Zoeken" @click.prevent="handleSubmit"/>-->
+            <div v-if="selectedTerm.id" class="selected-terms">
+              <button @click.prevent="unselectSearchTerm()">
+                <span v-if="selectedTerm.matchingLabel">
+                  {{ selectedTerm.matchingLabel }}
+                </span>
+                <span v-if="!selectedTerm.matchingLabel">
+                  {{ selectedTerm.prefLabel }}
+                </span>
+                <span class="remove">x</span>
+              </button>
+            </div>
           </div>
         </div>
-        <div v-if="selectedTerms.length > 0" class="selected-terms">
-          <button
-            v-for="(term, index) in selectedTerms"
-            :key="index"
-            @click.prevent="unselectSearchTerm(term)"
-          >
-            <span>{{ term.prefLabel }}</span> <span class="remove">x</span>
-          </button>
-        </div>
       </fieldset>
-      <template v-if="relatedTerms">
-        <fieldset class="selected-terms" v-if="relatedTerms.broader">
-          <template v-for="(term, index) in relatedTerms.broader" :key="index">
-            <legend>Zoek naar alle</legend>
-            <button
-              v-if="term.prefLabel"
-              @click.prevent="selectRelatedTerm(term)"
-            >
-              {{ term.prefLabel }}
-            </button>
-          </template>
-        </fieldset>
-        <fieldset class="selected-terms" v-if="relatedTerms.narrower">
-          <legend>Of verfijn het zoekresultaat</legend>
-          <template v-for="(term, index) in relatedTerms.narrower" :key="index">
-            <button
-              v-if="term.prefLabel"
-              @click.prevent="selectRelatedTerm(term)"
-            >
-              {{ term.prefLabel }}
-            </button>
-          </template>
-        </fieldset>
-      </template>
+      <fieldset class="selected-terms" v-if="selectedTerm?.broader?.length > 0">
+        <template v-for="(term, index) in selectedTerm.broader" :key="index">
+          <legend>Of zoek naar alle</legend>
+          <button
+            v-if="term.prefLabel"
+            @click.prevent="selectRelatedTerm(term.id)"
+          >
+            {{ term.prefLabel }}
+          </button>
+        </template>
+      </fieldset>
+      <fieldset
+        class="selected-terms"
+        v-if="selectedTerm?.narrower?.length > 0"
+      >
+        <legend>Of verfijn het zoekresultaat</legend>
+        <template v-for="(term, index) in selectedTerm.narrower" :key="index">
+          <button
+            v-if="term.prefLabel"
+            @click.prevent="selectRelatedTerm(term.id)"
+          >
+            {{ term.prefLabel }}
+          </button>
+        </template>
+      </fieldset>
       <!-- 
         FILTERS
         <fieldset class="search-select">
@@ -70,16 +75,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-// import FormSelect from '@/components/FormSelect.vue';
-// import { Terms } from '../../../sdk/src/terms';
+import { ref, onMounted, type Ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 import { Terms } from '../../../sdk/build/terms';
 
-const terms = ref([]);
-const selectedTerms = ref([]);
+const router = useRouter();
+const route = useRoute();
+
+const terms: Ref<Array> = ref([]);
+const selectedTerm: Ref<Array> = ref([]); // Currently, it's only possible to select one term at a time.
 const searchInputRef = ref([]);
-const relatedTerms = ref({});
 const currentInput = ref('');
 
 const termsFromSDK = new Terms();
@@ -91,80 +97,53 @@ defineProps({
 
 const emit = defineEmits(['showResults']);
 
-function returnPrefLabel(item: { id: string; prefLabel: string }) {
-  return item.prefLabel;
+function returnMatchingLabel(item: { id: string; matchingLabel: string }) {
+  return item.matchingLabel;
 }
 
-function removeTermFromList(item: { id: string }) {
-  terms.value = terms.value.filter(
-    (el: { term: string; prefLabel: string }) => {
-      return el.term !== item.id;
-    }
-  );
-}
-
-function selectSearchTerm(item: { id: string; prefLabel: string }) {
-  selectedTerms.value = [];
-
-  if (!selectedTerms.value.includes(item)) {
-    clearSuggestions();
-    searchInputRef.value.clearInput();
-
-    selectedTerms.value.push(item);
-
-    removeTermFromList(item);
-    findRelatedTerms();
-
-    emit('showResults', selectedTerms.value);
+function submitSearchTerm(item?: { id: string; matchingLabel: string }) {
+  if (item) {
+    router.replace({
+      name: 'home',
+      query: { query: encodeURIComponent(item.id) }
+    });
+  } else {
+    router.push({
+      name: 'home'
+    });
   }
 }
 
-function unselectSearchTerm(item: { id: string; prefLabel: string }) {
-  selectedTerms.value = selectedTerms.value.filter(
-    (el: { id: string; prefLabel: string }) => el.id !== item.id
-  );
-  // update related terms?
-  findRelatedTerms();
+async function selectSearchTerm(id: string) {
+  console.log('selectSearchTerm', id);
 
-  // update search results
-  emit('showResults', selectedTerms.value);
+  selectedTerm.value = [];
+  await getTermDetails(id);
+
+  emit('showResults', selectedTerm.value); // improve retrieval search results
 }
 
-function clearSuggestions() {
-  terms.value = [];
+function unselectSearchTerm() {
+  submitSearchTerm();
 }
 
-function findRelatedTerms() {
-  relatedTerms.value = [];
-  selectedTerms.value.forEach(async (term) => {
-    await termsFromSDK
-      .getById({ id: term.id })
-      .then((result) => {
-        //.log('findRelatedTerms', result);
-        relatedTerms.value = result;
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-  });
+async function getTermDetails(term: string) {
+  selectedTerm.value = [];
+  await termsFromSDK
+    .getById({ id: term })
+    .then((result) => {
+      selectedTerm.value = result;
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
 }
 
-function selectRelatedTerm(term: { id: string; prefLabel: string }) {
-  console.log('selectRelatedTerm', term);
-
-  // overwrite selectedTerms
-  selectedTerms.value = [];
-  selectedTerms.value.push(term);
-
-  // update related terms?
-  findRelatedTerms();
-
-  // update search results
-  emit('showResults', selectedTerms.value);
+function selectRelatedTerm(id: string) {
+  submitSearchTerm({ id: id, matchingLabel: '' }); // overwrite selected term
 }
 
 async function getSuggestions(item: { input: string }) {
-  //console.log('getSuggestions');
   currentInput.value = item.input;
 
   await termsFromSDK
@@ -176,6 +155,12 @@ async function getSuggestions(item: { input: string }) {
       console.error('Error:', error);
     });
 }
+
+onMounted(() => {
+  if (route.query.query && route.query.query !== 'undefined') {
+    selectSearchTerm(decodeURIComponent(route.query.query as string)); // move to parent component?
+  }
+});
 </script>
 
 <style scoped>
@@ -232,6 +217,19 @@ input[type='submit'] {
   line-height: 1;
 }
 
+.search-field-wrapper .selected-terms {
+  position: absolute;
+  top: 0.2rem;
+  left: 0.2rem;
+}
+
+.search-field-wrapper .selected-terms button {
+  font-size: 1.5rem;
+  padding: 0.5rem 1rem;
+  line-height: 1.25;
+  border: 1px solid var(--vt-c-orange);
+}
+
 .selected-terms button {
   font-size: 1rem;
   line-height: 1rem;
@@ -245,9 +243,11 @@ input[type='submit'] {
   background-color: var(--vt-c-orange);
   width: 16px;
   height: 16px;
-  display: inline-block;
+  font-size: 1rem;
   line-height: 15px;
+  display: inline-block;
   text-align: center;
+  margin-top: 0.5rem;
   margin-left: 0.5rem;
 }
 
@@ -259,6 +259,9 @@ div#searching_wrapper.simple-typeahead :deep(input) {
   border: 0;
   width: 100%;
   margin-bottom: 0;
+}
+div#searching_wrapper.simple-typeahead :deep(input:disabled) {
+  background: #fff;
 }
 
 .related button {

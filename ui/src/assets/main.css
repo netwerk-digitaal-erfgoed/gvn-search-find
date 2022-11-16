@@ -49,6 +49,10 @@ h1, h2, h3, h4, h5, h6, fieldset {
   margin-bottom: 2rem;
 }
 
+h1 {
+  line-height: 1;
+}
+
 button {
   background: var(--color-button);
   font-size: 1.5rem;
@@ -80,4 +84,33 @@ button.white {
 
 button.small {
   font-size: 1rem;
+}
+
+/*** search results cards ***/
+.search-result-card {
+  text-align: left;
+  font-size: 1rem;
+  background: #fff;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--vt-c-orange);
+  cursor: pointer;
+  page-break-inside: avoid;
+  flex: 1;
+}
+
+.search-result-card-image {
+  width: 100%;
+  height: auto;
+  background: var(--vt-c-orange);
+}
+
+.search-result-card-image img {
+  width: 100%;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.search-result-card-body {
+  font-weight: bold;
 }

@@ -11,12 +11,13 @@
     </router-link>
   </header>
   <main>
-    <RouterView />
+    <RouterView :key="route.fullPath" />
   </main>
 </template>
 
 <script setup lang="ts">
-import { RouterView } from 'vue-router';
+import { RouterView, useRoute } from 'vue-router';
+const route = useRoute();
 </script>
 
 <style scoped>
