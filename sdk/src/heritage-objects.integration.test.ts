@@ -13,8 +13,16 @@ describe('searchByTerm', () => {
     expect(result.results[0]).toMatchObject({
       id: 'http://data.collectienederland.nl/resource/document/museum-rotterdam/http-museumrotterdam.nl-collectie-item-43764-H.1-2',
       name: 'Kartonnen gebruiksaanwijzing van een "Dampf-Inhalations-Apparat" (stoom-inhaleerapparaat)',
-      publisher: 'https://museumrotterdam.nl/',
-      contentLocation: ['https://sws.geonames.org/2747891/'],
+      publisher: {
+        id: 'https://museumrotterdam.nl/',
+        name: 'Museum Rotterdam',
+      },
+      contentLocation: [
+        {
+          id: 'https://sws.geonames.org/2747891/',
+          name: 'Rotterdam',
+        },
+      ],
       dateCreated: '1880',
       additionalType: [
         'https://data.cultureelerfgoed.nl/term/id/cht/00dce1a8-e44a-4472-8558-0a1da2f920fb',
@@ -23,12 +31,18 @@ describe('searchByTerm', () => {
         contentUrl:
           'http://museumrotterdam.blob.core.windows.net/lowres/43764-H.1-2_1.jpg',
         encodingFormat: 'image/jpeg',
-        license: 'https://rightsstatements.org/page/InC/1.0/',
+        license: {
+          id: 'https://rightsstatements.org/page/InC/1.0/',
+          name: 'In copyright',
+        },
         thumbnail: {
           contentUrl:
             'http://museumrotterdam.blob.core.windows.net/lowres/43764-H.1-2_1.jpg',
           encodingFormat: 'image/jpeg',
-          license: 'https://rightsstatements.org/page/InC/1.0/',
+          license: {
+            id: 'https://rightsstatements.org/page/InC/1.0/',
+            name: 'In copyright',
+          },
         },
       },
     });
@@ -76,11 +90,19 @@ describe('getById', () => {
     expect(heritageObject).toMatchObject({
       id: 'http://data.collectienederland.nl/resource/document/museum-rotterdam/http-museumrotterdam.nl-collectie-item-47240-A-N',
       name: 'Veertien in papier verpakte dubbele stukken Sunlight huishoudzeep, veelkleurig',
-      publisher: 'https://museumrotterdam.nl/',
+      publisher: {
+        id: 'https://museumrotterdam.nl/',
+        name: 'Museum Rotterdam',
+      },
       description:
         'Per twee in papier verpakte, aan elkaar bevestigde, stukken huishoudzeep. Stukken zeep hebben verdiepte bovenkant en onderkant en zijn voorzien van tekst.',
       creator: ["fabrikant product: Lever's Zeepmaatschappij N.V."],
-      contentLocation: ['https://sws.geonames.org/2747891/'],
+      contentLocation: [
+        {
+          id: 'https://sws.geonames.org/2747891/',
+          name: 'Rotterdam',
+        },
+      ],
       dateCreated: '1925',
       additionalType: [
         'https://data.cultureelerfgoed.nl/term/id/cht/0a127f93-9c65-44bf-a850-52e7fd34f9b2',
@@ -91,12 +113,18 @@ describe('getById', () => {
         contentUrl:
           'http://museumrotterdam.blob.core.windows.net/lowres/47240-A-N_1.jpg',
         encodingFormat: 'image/jpeg',
-        license: 'https://rightsstatements.org/page/InC/1.0/',
+        license: {
+          id: 'https://rightsstatements.org/page/InC/1.0/',
+          name: 'In copyright',
+        },
         thumbnail: {
           contentUrl:
             'http://museumrotterdam.blob.core.windows.net/lowres/47240-A-N_1.jpg',
           encodingFormat: 'image/jpeg',
-          license: 'https://rightsstatements.org/page/InC/1.0/',
+          license: {
+            id: 'https://rightsstatements.org/page/InC/1.0/',
+            name: 'In copyright',
+          },
         },
       },
     });

@@ -5,21 +5,36 @@ export class SearchResult {
   // TBD: add 'totalCount' with number of matching objects?
 }
 
+export class License {
+  id: string | undefined;
+  name: string | undefined;
+}
+
 export class ImageObject {
   contentUrl: string | undefined;
   encodingFormat: string | undefined;
-  license: string | undefined;
+  license: License | undefined;
   thumbnail: ImageObject | undefined;
+}
+
+export class Publisher {
+  id: string | undefined;
+  name: string | undefined;
+}
+
+export class Location {
+  id: string | undefined;
+  name: string | undefined;
 }
 
 export class HeritageObject {
   id: string | undefined;
   name: string | undefined;
   additionalType: string[] | undefined;
-  publisher: string | undefined;
+  publisher: Publisher | undefined;
   description: string | undefined;
   creator: string[] | undefined;
-  contentLocation: string[] | undefined;
+  contentLocation: Location[] | undefined;
   dateCreated: string | undefined; // Not: 'Date'
   image: ImageObject | undefined;
 }
@@ -29,16 +44,20 @@ type HeritageObjectDataFromEndpoint = {
   additionalType?: string;
   name: string;
   publisher: string;
+  publisherName: string;
   description?: string;
   creator?: string;
   contentLocation?: string;
+  contentLocationName?: string;
   dateCreated?: string;
   imageContentUrl: string;
   imageEncodingFormat?: string;
   imageLicense: string;
+  imageLicenseName: string;
   thumbnailContentUrl: string;
   thumbnailEncodingFormat?: string;
   thumbnailLicense: string;
+  thumbnailLicenseName: string;
 };
 
 export interface SearchByTermOptions {
@@ -73,7 +92,10 @@ export class HeritageObjects {
         const heritageObject = new HeritageObject();
         heritageObject.id = rawHeritageObject.heritageObject;
         heritageObject.name = rawHeritageObject.name;
-        heritageObject.publisher = rawHeritageObject.publisher;
+
+        heritageObject.publisher = new Publisher();
+        heritageObject.publisher.id = rawHeritageObject.publisher;
+        heritageObject.publisher.name = rawHeritageObject.publisherName;
 
         if (rawHeritageObject.description) {
           heritageObject.description = rawHeritageObject.description;
@@ -86,7 +108,10 @@ export class HeritageObjects {
 
         // FIXME: multiple content locations
         if (rawHeritageObject.contentLocation) {
-          heritageObject.contentLocation = [rawHeritageObject.contentLocation];
+          const location = new Location();
+          location.id = rawHeritageObject.contentLocation;
+          location.name = rawHeritageObject.contentLocationName;
+          heritageObject.contentLocation = [location];
         }
 
         // FIXME: multiple creators
@@ -102,15 +127,20 @@ export class HeritageObjects {
         heritageObject.image.contentUrl = rawHeritageObject.imageContentUrl;
         heritageObject.image.encodingFormat =
           rawHeritageObject.imageEncodingFormat;
-        heritageObject.image.license = rawHeritageObject.imageLicense;
+        heritageObject.image.license = new License();
+        heritageObject.image.license.id = rawHeritageObject.imageLicense;
+        heritageObject.image.license.name = rawHeritageObject.imageLicenseName;
 
         heritageObject.image.thumbnail = new ImageObject();
         heritageObject.image.thumbnail.contentUrl =
           rawHeritageObject.thumbnailContentUrl;
         heritageObject.image.thumbnail.encodingFormat =
           rawHeritageObject.thumbnailEncodingFormat;
-        heritageObject.image.thumbnail.license =
+        heritageObject.image.thumbnail.license = new License();
+        heritageObject.image.thumbnail.license.id =
           rawHeritageObject.thumbnailLicense;
+        heritageObject.image.thumbnail.license.name =
+          rawHeritageObject.thumbnailLicenseName;
 
         return heritageObject;
       }
@@ -140,14 +170,17 @@ export class HeritageObjects {
     }
 
     const heritageObject = new HeritageObject();
-    const contentLocations = new Set<string>();
+    const contentLocations = new Map<string, Location>();
     const additionalTypes = new Set<string>();
     const creators = new Set<string>();
 
     for (const rawHeritageObject of results) {
       heritageObject.id = rawHeritageObject.heritageObject;
       heritageObject.name = rawHeritageObject.name;
-      heritageObject.publisher = rawHeritageObject.publisher;
+
+      heritageObject.publisher = new Publisher();
+      heritageObject.publisher.id = rawHeritageObject.publisher;
+      heritageObject.publisher.name = rawHeritageObject.publisherName;
 
       if (rawHeritageObject.description) {
         heritageObject.description = rawHeritageObject.description;
@@ -158,7 +191,12 @@ export class HeritageObjects {
       }
 
       if (rawHeritageObject.contentLocation) {
-        contentLocations.add(rawHeritageObject.contentLocation);
+        if (!contentLocations.has(rawHeritageObject.contentLocation)) {
+          const location = new Location();
+          location.id = rawHeritageObject.contentLocation;
+          location.name = rawHeritageObject.contentLocationName;
+          contentLocations.set(rawHeritageObject.contentLocation, location);
+        }
       }
 
       if (rawHeritageObject.creator) {
@@ -173,19 +211,24 @@ export class HeritageObjects {
       heritageObject.image.contentUrl = rawHeritageObject.imageContentUrl;
       heritageObject.image.encodingFormat =
         rawHeritageObject.imageEncodingFormat;
-      heritageObject.image.license = rawHeritageObject.imageLicense;
+      heritageObject.image.license = new License();
+      heritageObject.image.license.id = rawHeritageObject.imageLicense;
+      heritageObject.image.license.name = rawHeritageObject.imageLicenseName;
 
       heritageObject.image.thumbnail = new ImageObject();
       heritageObject.image.thumbnail.contentUrl =
         rawHeritageObject.thumbnailContentUrl;
       heritageObject.image.thumbnail.encodingFormat =
         rawHeritageObject.thumbnailEncodingFormat;
-      heritageObject.image.thumbnail.license =
+      heritageObject.image.thumbnail.license = new License();
+      heritageObject.image.thumbnail.license.id =
         rawHeritageObject.thumbnailLicense;
+      heritageObject.image.thumbnail.license.name =
+        rawHeritageObject.thumbnailLicenseName;
     }
 
     heritageObject.additionalType = Array.from(additionalTypes);
-    heritageObject.contentLocation = Array.from(contentLocations);
+    heritageObject.contentLocation = Array.from(contentLocations.values());
     heritageObject.creator = Array.from(creators);
 
     return heritageObject;
