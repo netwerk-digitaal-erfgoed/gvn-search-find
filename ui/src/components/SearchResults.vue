@@ -1,6 +1,6 @@
 <template>
   <div class="search-results">
-    <h2>{{ numberOfResults }} resultaten</h2>
+    <h2>{{ numberOfResults }} objecten</h2>
     <ul>
       <li v-for="(result, index) in searchResults" :key="index">
         <SearchResult :object="result" />
@@ -10,16 +10,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
 import SearchResult from '@/components/SearchResult.vue';
 
-const props = defineProps({
-  searchResults: Array
-});
-
-const numberOfResults = computed(() => {
-  return props.searchResults?.length;
+defineProps({
+  searchResults: Array,
+  numberOfResults: Number
 });
 </script>
 

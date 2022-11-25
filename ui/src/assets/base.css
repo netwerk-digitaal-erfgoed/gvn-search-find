@@ -2,9 +2,10 @@
   --vt-c-white: #ffffff;
 
 /* Geheugen van Nederland colourpalette */
-  --vt-c-orange :#ff733f;
+  --vt-c-orange:#ff733f;
   --vt-c-brown-soft: #faf7ed;
   --vt-c-dark-blue: #232451;
+  --vt-c-dark-yellow:#eac960;
 }
 
 /* semantic color variables for this project */
@@ -14,6 +15,7 @@
   --color-button-orange: var(--vt-c-orange);
   --color-button-white: var(--vt-c-white);
   --color-text: var(--vt-c-dark-blue);
+  --color-link: var(--vt-c-dark-blue);
 }
 
 *,

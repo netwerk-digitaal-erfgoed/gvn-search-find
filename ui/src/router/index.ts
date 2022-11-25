@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import ObjectView from '../views/ObjectView.vue';
+import DatasetView from '../views/DatasetView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,6 +15,11 @@ const router = createRouter({
       path: '/object',
       name: 'object',
       component: ObjectView
+    },
+    {
+      path: '/dataset',
+      name: 'dataset',
+      component: DatasetView
     }
   ],
   scrollBehavior() {

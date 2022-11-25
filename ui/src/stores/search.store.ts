@@ -9,7 +9,6 @@ export const searchStore = defineStore('search', () => {
   }
 
   function getSelectedObject() {
-    console.log('getSelectedObject', selectedObject.value);
     return selectedObject.value;
   }
 

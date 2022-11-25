@@ -45,6 +45,7 @@
         <tr>
           <th>Termen</th>
           <td>
+            <LoadingSpinnerBar v-if="isLoadingTerms" />
             <button
               v-for="(term, t) in relatedTerms"
               :key="t"
@@ -57,11 +58,12 @@
         </tr>
       </table>
     </div>
+    <LoadingSpinnerBar v-if="isLoadingRelated" />
     <div
       class="object-related"
       v-if="relatedTerms?.length > 0 && relatedObjects?.length > 0"
     >
-      <h2>Meer {{ relatedTerms[0].prefLabel }}</h2>
+      <h2>Andere {{ relatedTerms[0].prefLabel }}</h2>
       <div class="related-objects">
         <SearchResult
           v-for="(object, t) in relatedObjects"
@@ -69,6 +71,12 @@
           :object="object"
         />
       </div>
+      <button
+        class="white small float-right"
+        @click="submitSearchTerm(relatedTerms[0].id)"
+      >
+        Alle {{ relatedTerms[0].prefLabel }}
+      </button>
     </div>
   </div>
 </template>
@@ -81,12 +89,16 @@ import { Terms } from '../../../sdk/build/terms';
 import { HeritageObjects } from '../../../sdk/build/heritage-objects';
 
 import SearchResult from '@/components/SearchResult.vue';
+import LoadingSpinnerBar from '@/components/LoadingSpinnerBar.vue';
 
 const router = useRouter();
 const terms = new Terms();
 const heritageObjects = new HeritageObjects();
 const relatedTerms: Ref<Array> = ref([]);
 const relatedObjects: Ref<Array> = ref([]);
+
+const isLoadingRelated = ref(false);
+const isLoadingTerms = ref(false);
 
 const props = defineProps({
   details: Object
@@ -96,12 +108,14 @@ const heritageObject = computed(() => {
   return props.details;
 });
 
-function termLookUp(lookup: object) {
-  lookup.forEach(async (term: { id: string }) => {
+async function termLookUp(lookup: object) {
+  isLoadingTerms.value = true;
+  await lookup.forEach(async (term: { id: string }) => {
     await terms
       .getById({ id: term })
       .then((result) => {
         relatedTerms.value.push(result);
+        isLoadingTerms.value = false;
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -128,11 +142,18 @@ function labelMedia(typeOfMedia: string) {
 }
 
 async function getRelatedObjects(term: string) {
+  isLoadingRelated.value = true;
   await heritageObjects
     .searchByTerm({ term })
     .then((result) => {
       const objects = result.results.sort(() => 0.5 - Math.random()); // easy shuffling, could possibly be improved
-      relatedObjects.value = objects.slice(0, 3); // max 3 related
+      const filteredObjects = objects.filter(
+        (obj) => obj.id !== props.details?.id
+      );
+
+      // remove current object
+      relatedObjects.value = filteredObjects.slice(0, 3); // max 3 related
+      isLoadingRelated.value = false;
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -146,9 +167,9 @@ function submitSearchTerm(id: string) {
   });
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (heritageObject.value) {
-    termLookUp(heritageObject.value.additionalType);
+    await termLookUp(heritageObject.value.additionalType);
     getRelatedObjects(heritageObject.value.additionalType[0]);
   }
 });

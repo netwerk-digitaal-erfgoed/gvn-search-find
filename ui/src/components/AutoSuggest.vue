@@ -22,7 +22,6 @@ defineProps({
 const emit = defineEmits(['selectSearchTerm']);
 
 function selectTerm(term: { term: string; prefLabel: string }) {
-  console.log('selectSearchTerm', term);
   emit('selectSearchTerm', term);
 }
 </script>

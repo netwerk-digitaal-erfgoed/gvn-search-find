@@ -1,20 +1,31 @@
 <template>
   <div class="search-form-container">
+    <div 
+      v-if="errorMessage"
+      class="error-message"
+    >
+      <p>{{ errorMessage }}</p>
+    </div>
     <form class="search-form">
       <fieldset>
         <label for="query">Zoek naar informatie over</label>
         <div class="search-field-wrapper">
           <div class="search-field">
+            <LoadingSpinnerBar v-if="isLoading" />
             <vue3-simple-typeahead
               id="searching"
               ref="searchInputRef"
               :placeholder="
-                selectedTerm.length === 0 ? 'Voer een trefwoord in' : ''
+                Object.keys(selectedTerm).length === 0
+                  ? 'Voer een trefwoord in'
+                  : ''
               "
               :item-projection="returnMatchingLabel"
               :items="terms"
               :min-input-length="1"
-              :disabled="selectedTerm.length > 0 ? true : false"
+              :disabled="
+                Object.keys(selectedTerm).length > 0 || isLoading ? true : false
+              "
               @selectItem="submitSearchTerm"
               @onInput="getSuggestions"
             />
@@ -75,6 +86,8 @@
 </template>
 
 <script setup lang="ts">
+import LoadingSpinnerBar from '@/components/LoadingSpinnerBar.vue';
+
 import { ref, onMounted, type Ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -87,6 +100,8 @@ const terms: Ref<Array> = ref([]);
 const selectedTerm: Ref<Array> = ref([]); // Currently, it's only possible to select one term at a time.
 const searchInputRef = ref([]);
 const currentInput = ref('');
+const isLoading = ref(false);
+const errorMessage = ref('');
 
 const termsFromSDK = new Terms();
 
@@ -102,6 +117,8 @@ function returnMatchingLabel(item: { id: string; matchingLabel: string }) {
 }
 
 function submitSearchTerm(item?: { id: string; matchingLabel: string }) {
+  errorMessage.value = '';
+
   if (item) {
     router.replace({
       name: 'home',
@@ -115,9 +132,8 @@ function submitSearchTerm(item?: { id: string; matchingLabel: string }) {
 }
 
 async function selectSearchTerm(id: string) {
-  console.log('selectSearchTerm', id);
-
   selectedTerm.value = [];
+  isLoading.value = true;
   await getTermDetails(id);
 
   emit('showResults', selectedTerm.value); // improve retrieval search results
@@ -133,9 +149,11 @@ async function getTermDetails(term: string) {
     .getById({ id: term })
     .then((result) => {
       selectedTerm.value = result;
+      isLoading.value = false;
     })
     .catch((error) => {
-      console.error('Error:', error);
+      errorMessage.value = error;
+      isLoading.value = false;
     });
 }
 
@@ -152,7 +170,8 @@ async function getSuggestions(item: { input: string }) {
       terms.value = result;
     })
     .catch((error) => {
-      console.error('Error:', error);
+      errorMessage.value = error;
+      isLoading.value = false;
     });
 }
 
@@ -164,36 +183,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.search-form-container {
-  background: var(--vt-c-brown-soft);
-}
-.search-form {
-  margin: 0 auto 3rem auto;
-  font-size: 1.5rem;
-  padding: 1.5rem 0;
-  width: 75vw;
-}
-
-fieldset {
-  border: 0;
-  padding: 0;
-  position: relative;
-  line-height: 2.25;
-  margin-bottom: 1rem;
-}
-
-fieldset > div {
-  display: inline-block;
-}
-
-fieldset legend {
-  font-size: 1.5rem;
-  line-height: 2.25;
-}
-.buttons {
-  text-align: right;
-}
-
 input[type='submit'] {
   background: var(--vt-c-orange);
   font-size: 1rem;
@@ -253,6 +242,7 @@ input[type='submit'] {
 
 .search-field {
   display: flex;
+  align-items: center;
 }
 
 div#searching_wrapper.simple-typeahead :deep(input) {
