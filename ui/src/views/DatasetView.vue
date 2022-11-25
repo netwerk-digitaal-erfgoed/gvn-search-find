@@ -5,5 +5,5 @@
 </template>
 
 <script setup lang="ts">
-  import SelectDataset from '@/components/SelectDataset.vue';
+import SelectDataset from '@/components/SelectDataset.vue';
 </script>

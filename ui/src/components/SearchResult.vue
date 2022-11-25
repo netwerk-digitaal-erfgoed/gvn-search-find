@@ -3,7 +3,7 @@
     <div class="search-result-card-image">
       <img
         v-if="object.image.thumbnail.contentUrl"
-        :src="object.image.thumbnail.contentUrl"
+        v-lazy="object.image.thumbnail.contentUrl"
         alt=""
       />
     </div>
@@ -18,7 +18,10 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 defineProps({
-  object: Object
+  object: {
+    required: true,
+    type: Object
+  },
 });
 
 function showObjectDetails(object: { id: string }) {

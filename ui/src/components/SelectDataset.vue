@@ -15,10 +15,7 @@
         </div>
       </fieldset>
       <div class="buttons">
-        <button
-          class="orange"
-          @click.prevent="selectDatasets()"
-        >
+        <button class="orange" @click.prevent="selectDatasets()">
           Selecteer
         </button>
       </div>
@@ -27,24 +24,23 @@
 </template>
 
 <script setup lang="ts">
-  import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 
-  const router = useRouter();
+const router = useRouter();
 
-  function selectDatasets() {
-    router.replace({
-      name: 'home'
-    }); // temp 
-  }
-
+function selectDatasets() {
+  router.replace({
+    name: 'home'
+  }); // temp
+}
 </script>
 
 <style scoped>
-  .select-dataset-wrapper {
-    width: 100%;
-  }
+.select-dataset-wrapper {
+  width: 100%;
+}
 
-  .select-dataset-wrapper label {
-    display: block;
-  }
+.select-dataset-wrapper label {
+  display: block;
+}
 </style>

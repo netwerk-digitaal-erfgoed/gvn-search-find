@@ -1,9 +1,6 @@
 <template>
   <div class="search-form-container">
-    <div 
-      v-if="errorMessage"
-      class="error-message"
-    >
+    <div v-if="errorMessage" class="error-message">
       <p>{{ errorMessage }}</p>
     </div>
     <form class="search-form">

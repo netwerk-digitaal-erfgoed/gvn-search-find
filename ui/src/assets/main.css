@@ -150,6 +150,7 @@ button.small {
 
 .search-result-card-image {
   width: 100%;
+  min-height: 5rem;
   height: auto;
   background: var(--vt-c-orange);
 }

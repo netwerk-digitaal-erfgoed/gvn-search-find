@@ -56,7 +56,8 @@ import { ref, toRefs } from 'vue';
 
 const props = defineProps({
   numberOfPages: {
-    required: true
+    required: true,
+    type: Number
   },
   modelValue: {
     required: true,
@@ -66,6 +67,7 @@ const props = defineProps({
 
 const showPages = ref(10);
 const { numberOfPages, modelValue: currentPage } = toRefs(props);
+
 const emit = defineEmits(['update:modelValue']);
 
 function showPageInPagination(index: number) {

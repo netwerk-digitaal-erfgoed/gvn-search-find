@@ -10,8 +10,8 @@
         <tr>
           <th>Instelling</th>
           <td>
-            <a :href="heritageObject?.publisher" target="_blank">{{
-              heritageObject?.publisher
+            <a :href="heritageObject?.publisher.id" target="_blank">{{
+              heritageObject?.publisher.name
             }}</a>
           </td>
         </tr>
@@ -26,15 +26,15 @@
               v-for="(location, l) in heritageObject?.contentLocation"
               :key="l"
             >
-              {{ location }}
+              {{ location.name }}
             </span>
           </td>
         </tr>
         <tr>
           <th>Licentie media</th>
           <td>
-            <a :href="heritageObject?.image.license" target="_blank">{{
-              labelRights(heritageObject?.image.license)
+            <a :href="heritageObject?.image.license.id" target="_blank">{{
+              heritageObject?.image.license.name
             }}</a>
           </td>
         </tr>
@@ -82,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, type Ref } from 'vue';
+import { computed, ref, onMounted, type Ref, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { Terms } from '../../../sdk/build/terms';
@@ -104,8 +104,10 @@ const props = defineProps({
   details: Object
 });
 
+const { details } = toRefs(props);
+
 const heritageObject = computed(() => {
-  return props.details;
+  return details?.value;
 });
 
 async function termLookUp(lookup: object) {
@@ -123,15 +125,6 @@ async function termLookUp(lookup: object) {
   });
 }
 
-function labelRights(statement: string) {
-  switch (statement) {
-    case 'https://rightsstatements.org/page/InC/1.0/':
-      return 'In copyright';
-    default:
-      return statement;
-  }
-}
-
 function labelMedia(typeOfMedia: string) {
   switch (typeOfMedia) {
     case 'image/jpeg':
@@ -147,11 +140,8 @@ async function getRelatedObjects(term: string) {
     .searchByTerm({ term })
     .then((result) => {
       const objects = result.results.sort(() => 0.5 - Math.random()); // easy shuffling, could possibly be improved
-      const filteredObjects = objects.filter(
-        (obj) => obj.id !== props.details?.id
-      );
+      const filteredObjects = objects.filter((obj) => obj.id !== details?.id);
 
-      // remove current object
       relatedObjects.value = filteredObjects.slice(0, 3); // max 3 related
       isLoadingRelated.value = false;
     })
