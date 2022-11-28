@@ -30,6 +30,7 @@ export class Location {
 export class HeritageObject {
   id: string | undefined;
   name: string | undefined;
+  mainEntityOfPage: string | undefined;
   additionalType: string[] | undefined;
   publisher: Publisher | undefined;
   description: string | undefined;
@@ -43,6 +44,7 @@ type HeritageObjectDataFromEndpoint = {
   heritageObject: string;
   additionalType?: string;
   name: string;
+  mainEntityOfPage: string;
   publisher: string;
   publisherName: string;
   description?: string;
@@ -92,6 +94,7 @@ export class HeritageObjects {
         const heritageObject = new HeritageObject();
         heritageObject.id = rawHeritageObject.heritageObject;
         heritageObject.name = rawHeritageObject.name;
+        heritageObject.mainEntityOfPage = rawHeritageObject.mainEntityOfPage;
 
         heritageObject.publisher = new Publisher();
         heritageObject.publisher.id = rawHeritageObject.publisher;
@@ -177,6 +180,7 @@ export class HeritageObjects {
     for (const rawHeritageObject of results) {
       heritageObject.id = rawHeritageObject.heritageObject;
       heritageObject.name = rawHeritageObject.name;
+      heritageObject.mainEntityOfPage = rawHeritageObject.mainEntityOfPage;
 
       heritageObject.publisher = new Publisher();
       heritageObject.publisher.id = rawHeritageObject.publisher;

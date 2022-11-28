@@ -13,6 +13,7 @@ describe('searchByTerm', () => {
     expect(result.results[0]).toMatchObject({
       id: 'http://data.collectienederland.nl/resource/document/museum-rotterdam/http-museumrotterdam.nl-collectie-item-43764-H.1-2',
       name: 'Kartonnen gebruiksaanwijzing van een "Dampf-Inhalations-Apparat" (stoom-inhaleerapparaat)',
+      mainEntityOfPage: 'http://museumrotterdam.nl/collectie/item/43764-H.1-2',
       publisher: {
         id: 'https://museumrotterdam.nl/',
         name: 'Museum Rotterdam',
@@ -90,6 +91,7 @@ describe('getById', () => {
     expect(heritageObject).toMatchObject({
       id: 'http://data.collectienederland.nl/resource/document/museum-rotterdam/http-museumrotterdam.nl-collectie-item-47240-A-N',
       name: 'Veertien in papier verpakte dubbele stukken Sunlight huishoudzeep, veelkleurig',
+      mainEntityOfPage: 'http://museumrotterdam.nl/collectie/item/47240-A-N',
       publisher: {
         id: 'https://museumrotterdam.nl/',
         name: 'Museum Rotterdam',
