@@ -31,14 +31,16 @@ import LoadingSpinnerBar from '@/components/LoadingSpinnerBar.vue';
 import PaginationComponent from '@/components/PaginationComponent.vue';
 
 import { ref, computed } from 'vue';
+import { searchStore } from '@/stores/search.store';
 
-import { HeritageObjects } from '../../../sdk/build/heritage-objects';
+import { HeritageObjects } from '../../sdk/build/heritage-objects';
 
+const store = searchStore();
 const heritageObjects = new HeritageObjects();
 
 const formSetup = ref({});
 
-const selectedTerm = ref([]);
+const selectedTerm = ref({});
 const searchResults = ref([]);
 
 const isLoading = ref(false);
@@ -64,10 +66,11 @@ const resultsForPage = computed(() => {
   return [];
 });
 
-async function callbackShowResults(selected: []) {
+async function callbackShowResults(selected: { id: string }) {
   selectedTerm.value = selected;
   searchResults.value = [];
   isLoading.value = true;
+  store.setSelectedTerm(selected); // use store for now, might be a temp solution
 
   // search
   await heritageObjects

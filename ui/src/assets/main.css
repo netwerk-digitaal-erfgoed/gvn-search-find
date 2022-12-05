@@ -23,14 +23,16 @@ header, main {
 
 header {
   width: 75vw;
+  margin-top: 2rem;
 }
 
-header {
-  margin-top: 2rem;
+header a {
+  display: inline-block;
 }
 
 p {
   font-size: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 a {
@@ -53,6 +55,7 @@ h1 {
   line-height: 1;
 }
 
+a.button,
 button {
   background: var(--color-button);
   font-size: 1.5rem;
@@ -64,24 +67,30 @@ button {
   box-shadow: 2px 2px rgb(205, 210, 198, 0.5);
 }
 
+a.button:hover,
 button:hover {
   transition: box-shadow 0.2s;
   box-shadow: 2px 2px rgb(205, 210, 198, 1);
+  text-decoration: none;
 }
 
+a.button:focus,
 button:focus {
   transform: scale(0.98);
   box-shadow: 2px 2px rgb(205, 210, 198, 1);
 }
 
+a.button.orange,
 button.orange {
   background: var(--color-button-orange);
 }
 
+a.button.white,
 button.white {
   background: var(--color-button-white);
 }
 
+a.button.small,
 button.small {
   font-size: 1rem;
 }
@@ -100,6 +109,14 @@ button.small {
   margin: 0 auto;
   padding: 1rem 0;
   width: 75vw;
+}
+
+.error-message a {
+  text-decoration: underline;
+}
+
+.error-message a:hover {
+  text-decoration: none;
 }
 
 /*** search form ***/
@@ -152,7 +169,6 @@ button.small {
   width: 100%;
   min-height: 5rem;
   height: auto;
-  background: var(--vt-c-orange);
 }
 
 .search-result-card-image img {
@@ -163,4 +179,15 @@ button.small {
 
 .search-result-card-body {
   font-weight: bold;
+}
+
+.text-container {
+  margin: 5rem auto;
+  font-size: 1.5rem;
+  padding: 0;
+  width: 60vw;
+}
+
+.text-container.centered {
+  text-align: center;
 }

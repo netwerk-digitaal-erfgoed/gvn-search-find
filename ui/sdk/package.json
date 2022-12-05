@@ -11,6 +11,7 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
+    "editorial-gvn": "file:..",
     "gaxios": "5.x.x"
   },
   "devDependencies": {

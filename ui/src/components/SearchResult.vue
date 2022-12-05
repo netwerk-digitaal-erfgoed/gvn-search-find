@@ -1,11 +1,7 @@
 <template>
   <div class="search-result-card" @click="showObjectDetails(object)">
     <div class="search-result-card-image">
-      <img
-        v-if="object.image.thumbnail.contentUrl"
-        v-lazy="object.image.thumbnail.contentUrl"
-        alt=""
-      />
+      <ProgressiveImage :src="object.image.thumbnail.contentUrl" />
     </div>
     <div class="search-result-card-body">
       {{ object.name }}
@@ -15,13 +11,30 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { ProgressiveImage } from 'vue-progressive-image';
+import type { PropType } from 'vue';
+
+export interface Image {
+  thumbnail: ImageDetails;
+}
+
+export interface ImageDetails {
+  contentUrl: string;
+}
+
+export interface Result {
+  id: string;
+  name: string;
+  image: Image;
+}
 
 const router = useRouter();
+
 defineProps({
   object: {
     required: true,
-    type: Object
-  },
+    type: Object as PropType<Result>
+  }
 });
 
 function showObjectDetails(object: { id: string }) {

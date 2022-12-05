@@ -1,6 +1,10 @@
 <template>
   <div class="search-results">
-    <h2>{{ numberOfResults }} objecten</h2>
+    <h2>
+      {{ numberOfResults }}
+      <span v-if="numberOfResults > 1">objecten</span>
+      <span v-else>object</span>
+    </h2>
     <ul>
       <li v-for="(result, index) in searchResults" :key="index">
         <SearchResult :object="result" />
@@ -12,9 +16,27 @@
 <script setup lang="ts">
 import SearchResult from '@/components/SearchResult.vue';
 
-defineProps({
-  searchResults: Array,
-  numberOfResults: Number
+export interface Image {
+  thumbnail: ImageDetails;
+}
+
+export interface ImageDetails {
+  contentUrl: string;
+}
+
+export interface Result {
+  id: string;
+  name: string;
+  image: Image;
+}
+
+export interface Props {
+  searchResults: Array<Result>;
+  numberOfResults: number;
+}
+
+withDefaults(defineProps<Props>(), {
+  numberOfResults: 0
 });
 </script>
 

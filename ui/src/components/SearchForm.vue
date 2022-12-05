@@ -88,7 +88,7 @@ import LoadingSpinnerBar from '@/components/LoadingSpinnerBar.vue';
 import { ref, onMounted, type Ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { Terms } from '../../../sdk/build/terms';
+import { Terms } from '../../sdk/build/terms';
 
 const router = useRouter();
 const route = useRoute();
@@ -118,12 +118,12 @@ function submitSearchTerm(item?: { id: string; matchingLabel: string }) {
 
   if (item) {
     router.replace({
-      name: 'home',
-      query: { query: encodeURIComponent(item.id) }
+      name: 'search',
+      query: { query: encodeURIComponent(item.id), label: item.matchingLabel }
     });
   } else {
     router.push({
-      name: 'home'
+      name: 'search'
     });
   }
 }
@@ -133,7 +133,7 @@ async function selectSearchTerm(id: string) {
   isLoading.value = true;
   await getTermDetails(id);
 
-  emit('showResults', selectedTerm.value); // improve retrieval search results
+  emit('showResults', selectedTerm.value); // improve search results retrieval
 }
 
 function unselectSearchTerm() {
@@ -149,8 +149,12 @@ async function getTermDetails(term: string) {
       isLoading.value = false;
     })
     .catch((error) => {
-      errorMessage.value = error;
+      errorMessage.value = error; // user-friendly error message
       isLoading.value = false;
+      selectedTerm.value = {
+        id: route.query.query,
+        prefLabel: route.query.label
+      }; // fallback: still set the selected button, without suggestions
     });
 }
 
@@ -180,6 +184,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.error-message {
+  background-color: var(--vt-c-dark-yellow);
+}
+
 input[type='submit'] {
   background: var(--vt-c-orange);
   font-size: 1rem;

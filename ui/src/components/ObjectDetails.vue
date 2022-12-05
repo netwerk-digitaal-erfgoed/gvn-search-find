@@ -1,29 +1,27 @@
 <template>
   <div class="object-image">
-    <img :src="heritageObject?.image.contentUrl" alt="" />
+    <ProgressiveImage :src="heritageObject.image.contentUrl" />
   </div>
   <div class="object-details-container">
     <div class="object-metadata">
-      <h1>{{ heritageObject?.name }}</h1>
-      <p class="intro">{{ heritageObject?.description }}</p>
+      <h1>{{ heritageObject.name }}</h1>
+      <p class="intro">{{ heritageObject.description }}</p>
       <table>
         <tr>
           <th>Instelling</th>
           <td>
-            <a :href="heritageObject?.publisher.id" target="_blank">{{
-              heritageObject?.publisher.name
-            }}</a>
+           {{ heritageObject.publisher.name }}
           </td>
         </tr>
         <tr>
           <th>Datering</th>
-          <td>{{ heritageObject?.dateCreated }}</td>
+          <td>{{ heritageObject.dateCreated }}</td>
         </tr>
         <tr>
           <th>Locatie</th>
           <td>
             <span
-              v-for="(location, l) in heritageObject?.contentLocation"
+              v-for="(location, l) in heritageObject.contentLocation"
               :key="l"
             >
               {{ location.name }}
@@ -33,19 +31,18 @@
         <tr>
           <th>Licentie media</th>
           <td>
-            <a :href="heritageObject?.image.license.id" target="_blank">{{
-              heritageObject?.image.license.name
+            <a :href="heritageObject.image.license.id" target="_blank">{{
+              heritageObject.image.license.name
             }}</a>
           </td>
         </tr>
         <tr>
           <th>Type media</th>
-          <td>{{ labelMedia(heritageObject?.image.encodingFormat) }}</td>
+          <td>{{ labelMedia(heritageObject.image.encodingFormat) }}</td>
         </tr>
-        <tr>
+        <tr class="no-padding-bottom">
           <th>Termen</th>
           <td>
-            <LoadingSpinnerBar v-if="isLoadingTerms" />
             <button
               v-for="(term, t) in relatedTerms"
               :key="t"
@@ -54,16 +51,26 @@
             >
               {{ term.prefLabel }}
             </button>
+            <LoadingSpinnerBar v-if="isLoadingTerms" />
           </td>
         </tr>
       </table>
     </div>
-    <LoadingSpinnerBar v-if="isLoadingRelated" />
+    <div v-if="heritageObject.mainEntityOfPage" class="object-buttons">
+      <a
+        :href="heritageObject.mainEntityOfPage"
+        target="_blank"
+        class="button white small"
+      >
+        Bekijk dit object bij {{ heritageObject?.publisher.name }}
+      </a>
+    </div>
     <div
       class="object-related"
       v-if="relatedTerms?.length > 0 && relatedObjects?.length > 0"
     >
-      <h2>Andere {{ relatedTerms[0].prefLabel }}</h2>
+      <h2 v-if="related.length > 0">Alle {{ related[0].prefLabel }}</h2>
+      <h2 v-else>Alle {{ relatedTerms[0].prefLabel }}</h2>
       <div class="related-objects">
         <SearchResult
           v-for="(object, t) in relatedObjects"
@@ -72,6 +79,14 @@
         />
       </div>
       <button
+        v-if="related.length > 0"
+        class="white small float-right"
+        @click="submitSearchTerm(related[0].id)"
+      >
+        Alle {{ related[0].prefLabel }}
+      </button>
+      <button
+        v-else
         class="white small float-right"
         @click="submitSearchTerm(relatedTerms[0].id)"
       >
@@ -84,27 +99,64 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, type Ref, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
+import { ProgressiveImage } from 'vue-progressive-image';
 
-import { Terms } from '../../../sdk/build/terms';
-import { HeritageObjects } from '../../../sdk/build/heritage-objects';
+import { Terms } from '../../sdk/build/terms';
+import { HeritageObjects } from '../../sdk/build/heritage-objects';
 
 import SearchResult from '@/components/SearchResult.vue';
 import LoadingSpinnerBar from '@/components/LoadingSpinnerBar.vue';
 
+export interface Image {
+  contentUrl: string;
+  license: License;
+  encodingFormat: string;
+}
+
+export interface Publisher {
+  id: string;
+  name: string;
+}
+
+export interface Location {
+  id: string;
+  name: string;
+}
+
+export interface License {
+  id: string;
+  name: string;
+}
+
+export interface HeritageObject {
+  id: string;
+  name: string;
+  description: string;
+  image: Image;
+  publisher: Publisher;
+  dateCreated: string;
+  contentLocation: Location;
+  mainEntityOfPage: string;
+  additionalType: Array<string>;
+}
+
+export interface Props {
+  details: HeritageObject;
+  related?: Array<string>;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  related: () => []
+});
+
+const { details, related } = toRefs(props);
 const router = useRouter();
 const terms = new Terms();
 const heritageObjects = new HeritageObjects();
 const relatedTerms: Ref<Array> = ref([]);
 const relatedObjects: Ref<Array> = ref([]);
 
-const isLoadingRelated = ref(false);
 const isLoadingTerms = ref(false);
-
-const props = defineProps({
-  details: Object
-});
-
-const { details } = toRefs(props);
 
 const heritageObject = computed(() => {
   return details?.value;
@@ -112,16 +164,28 @@ const heritageObject = computed(() => {
 
 async function termLookUp(lookup: object) {
   isLoadingTerms.value = true;
-  await lookup.forEach(async (term: { id: string }) => {
-    await terms
-      .getById({ id: term })
-      .then((result) => {
-        relatedTerms.value.push(result);
-        isLoadingTerms.value = false;
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+
+  const lookupTerms = new Promise<void>((resolve) => {
+    Object.values(lookup).forEach(async (val: string) => {
+      await terms
+        .getById({ id: val })
+        .then((result) => {
+          relatedTerms.value.push(result);
+          if (relatedTerms.value.length === Object.keys(lookup).length) {
+            resolve();
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    });
+  });
+
+  lookupTerms.then(() => {
+    isLoadingTerms.value = false;
+    if (related?.value.length === 0 && relatedTerms.value.length > 0) {
+      getRelatedObjects(relatedTerms.value[0].id);
+    }
   });
 }
 
@@ -135,7 +199,6 @@ function labelMedia(typeOfMedia: string) {
 }
 
 async function getRelatedObjects(term: string) {
-  isLoadingRelated.value = true;
   await heritageObjects
     .searchByTerm({ term })
     .then((result) => {
@@ -143,7 +206,6 @@ async function getRelatedObjects(term: string) {
       const filteredObjects = objects.filter((obj) => obj.id !== details?.id);
 
       relatedObjects.value = filteredObjects.slice(0, 3); // max 3 related
-      isLoadingRelated.value = false;
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -152,7 +214,7 @@ async function getRelatedObjects(term: string) {
 
 function submitSearchTerm(id: string) {
   router.replace({
-    name: 'home',
+    name: 'search',
     query: { query: encodeURIComponent(id) }
   });
 }
@@ -160,7 +222,9 @@ function submitSearchTerm(id: string) {
 onMounted(async () => {
   if (heritageObject.value) {
     await termLookUp(heritageObject.value.additionalType);
-    getRelatedObjects(heritageObject.value.additionalType[0]);
+    if (related.value.length > 0) {
+      getRelatedObjects(related.value[0].id);
+    }
   }
 });
 </script>
@@ -194,6 +258,10 @@ onMounted(async () => {
   border: 3px solid var(--vt-c-brown-soft);
 }
 
+.object-metadata {
+  margin-bottom: 0;
+}
+
 .object-metadata .intro {
   font-size: 1.5rem;
   margin-bottom: 2rem;
@@ -204,7 +272,7 @@ onMounted(async () => {
   width: 100%;
   border-collapse: collapse;
   border-spacing: 0;
-  margin-bottom: 5rem;
+  margin-bottom: 2rem;
 }
 
 .object-metadata table tr th,
@@ -213,6 +281,11 @@ onMounted(async () => {
   padding: 0.5rem 0;
   text-align: left;
   vertical-align: top;
+}
+
+.object-metadata table tr.no-padding-bottom th,
+.object-metadata table tr.no-padding-bottom td {
+  padding-bottom: 0;
 }
 
 .object-metadata table tr th {
@@ -225,7 +298,9 @@ onMounted(async () => {
 }
 
 .object-buttons {
-  text-align: right;
+  text-align: center;
+  margin: 0 auto 3rem auto;
+  width: 60vw;
 }
 
 .related-objects {

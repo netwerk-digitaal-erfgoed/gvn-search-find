@@ -15,7 +15,7 @@
         </div>
       </fieldset>
       <div class="buttons">
-        <button class="orange" @click.prevent="selectDatasets()">
+        <button class="small orange" @click.prevent="selectDatasets()">
           Selecteer
         </button>
       </div>
@@ -30,7 +30,7 @@ const router = useRouter();
 
 function selectDatasets() {
   router.replace({
-    name: 'home'
+    name: 'search'
   }); // temp
 }
 </script>

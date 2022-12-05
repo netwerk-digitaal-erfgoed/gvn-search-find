@@ -6,6 +6,12 @@
   --vt-c-brown-soft: #faf7ed;
   --vt-c-dark-blue: #232451;
   --vt-c-dark-yellow:#eac960;
+
+/* progressive image loading */
+  --progressive-image-background-color: var(--vt-c-brown-soft);
+  --progressive-image-main-fade-speed: 0.5s;
+  --progressive-image-placeholder-fade-speed: 0.5s;
+  --progressive-image-skeleton-speed: 1s;
 }
 
 /* semantic color variables for this project */

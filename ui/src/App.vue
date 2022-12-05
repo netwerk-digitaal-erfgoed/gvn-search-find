@@ -1,12 +1,11 @@
 <template>
+  <NotificationBar />
   <header>
     <router-link to="/">
       <img
         alt="Geheugen van Nederland"
         class="logo"
         src="@/assets/logo.svg"
-        width="75"
-        height="75"
       />
     </router-link>
   </header>
@@ -16,6 +15,7 @@
 </template>
 
 <script setup lang="ts">
+import NotificationBar from '@/components/NotificationBar.vue';
 import { RouterView, useRoute } from 'vue-router';
 const route = useRoute();
 </script>
@@ -28,7 +28,7 @@ const route = useRoute();
 
 @media (min-width: 1024px) {
   .logo {
-    width: 380px;
+    width: 300px;
   }
 }
 </style>
