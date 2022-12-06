@@ -1,4 +1,4 @@
-import {request} from 'gaxios';
+import { request } from 'gaxios';
 
 export class SearchResult {
   results: HeritageObject[] = [];
@@ -82,8 +82,8 @@ export class HeritageObjects {
       params: {
         term: options.term,
         page: options.page,
-        pageSize: options.pageSize,
-      },
+        pageSize: options.pageSize
+      }
     });
 
     const rawHeritageObjects =
@@ -162,8 +162,8 @@ export class HeritageObjects {
     const response = await request({
       url: endpointUrl,
       params: {
-        heritageObject: options.id,
-      },
+        heritageObject: options.id
+      }
     });
 
     const results = response.data as HeritageObjectDataFromEndpoint[];

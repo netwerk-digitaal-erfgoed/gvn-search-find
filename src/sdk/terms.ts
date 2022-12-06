@@ -1,4 +1,4 @@
-import {request} from 'gaxios';
+import { request } from 'gaxios';
 
 export class BasicTerm {
   id: string | undefined;
@@ -60,8 +60,8 @@ export class Terms {
     const response = await request({
       url: endpointUrl,
       params: {
-        word: normalizedWord,
-      },
+        word: normalizedWord
+      }
     });
 
     const results = response.data as AutocompletedTermFromEndpoint[];
@@ -83,7 +83,7 @@ export class Terms {
       autocompletedTerms.set(rawTerm.term, matchingTerm);
     }
 
-    autocompletedTerms.forEach(term => {
+    autocompletedTerms.forEach((term) => {
       const altLabels = [...new Set(term.altLabel)]; // Keep unique labels
       altLabels.sort((a: string, b: string) => a.localeCompare(b));
       term.altLabel = altLabels;
@@ -102,8 +102,8 @@ export class Terms {
     const response = await request({
       url: endpointUrl,
       params: {
-        term: options.id,
-      },
+        term: options.id
+      }
     });
 
     const results = response.data as TermDataFromEndpoint[];
@@ -133,14 +133,14 @@ export class Terms {
       if (rawTerm.broaderTerm !== null) {
         broaderTerms.set(rawTerm.broaderTerm, {
           id: rawTerm.broaderTerm,
-          prefLabel: rawTerm.broaderTerm_prefLabel,
+          prefLabel: rawTerm.broaderTerm_prefLabel
         });
       }
 
       if (rawTerm.narrowerTerm !== null) {
         narrowerTerms.set(rawTerm.narrowerTerm, {
           id: rawTerm.narrowerTerm,
-          prefLabel: rawTerm.narrowerTerm_prefLabel,
+          prefLabel: rawTerm.narrowerTerm_prefLabel
         });
       }
     }

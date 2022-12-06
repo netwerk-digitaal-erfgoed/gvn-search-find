@@ -10,7 +10,7 @@
         <tr>
           <th>Instelling</th>
           <td>
-           {{ heritageObject.publisher.name }}
+            {{ heritageObject.publisher.name }}
           </td>
         </tr>
         <tr>
@@ -101,8 +101,8 @@ import { computed, ref, onMounted, type Ref, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
 import { ProgressiveImage } from 'vue-progressive-image';
 
-import { Terms } from '../../sdk/build/terms';
-import { HeritageObjects } from '../../sdk/build/heritage-objects';
+import { Terms } from '@/sdk/terms';
+import { HeritageObjects } from '@/sdk/heritage-objects';
 
 import SearchResult from '@/components/SearchResult.vue';
 import LoadingSpinnerBar from '@/components/LoadingSpinnerBar.vue';

@@ -65,7 +65,7 @@
           </button>
         </template>
       </fieldset>
-      <!-- 
+      <!--
         FILTERS
         <fieldset class="search-select">
         <legend>Filter op</legend>
@@ -88,7 +88,7 @@ import LoadingSpinnerBar from '@/components/LoadingSpinnerBar.vue';
 import { ref, onMounted, type Ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { Terms } from '../../sdk/build/terms';
+import { Terms } from '@/sdk/terms';
 
 const router = useRouter();
 const route = useRoute();

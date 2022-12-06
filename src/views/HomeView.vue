@@ -33,7 +33,7 @@ import PaginationComponent from '@/components/PaginationComponent.vue';
 import { ref, computed } from 'vue';
 import { searchStore } from '@/stores/search.store';
 
-import { HeritageObjects } from '../../sdk/build/heritage-objects';
+import { HeritageObjects } from '@/sdk/heritage-objects';
 
 const store = searchStore();
 const heritageObjects = new HeritageObjects();

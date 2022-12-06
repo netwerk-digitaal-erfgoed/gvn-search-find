@@ -19,7 +19,7 @@ import ObjectDetails from '@/components/ObjectDetails.vue';
 import LoadingSpinnerBar from '@/components/LoadingSpinnerBar.vue';
 import { searchStore } from '@/stores/search.store';
 
-import { HeritageObjects } from '../../sdk/build/heritage-objects';
+import { HeritageObjects } from '@/sdk/heritage-objects';
 
 export interface Term {
   broader: Array<string>;

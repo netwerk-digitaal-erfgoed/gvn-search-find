@@ -2,11 +2,7 @@
   <NotificationBar />
   <header>
     <router-link to="/">
-      <img
-        alt="Geheugen van Nederland"
-        class="logo"
-        src="@/assets/logo.svg"
-      />
+      <img alt="Geheugen van Nederland" class="logo" src="@/assets/logo.svg" />
     </router-link>
   </header>
   <main>
