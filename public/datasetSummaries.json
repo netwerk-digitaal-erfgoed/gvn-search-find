@@ -1,0 +1,71 @@
+{
+	"datasets": [{
+		"name": "Museum Rotterdam",
+		"summary": {
+			"entities": [{
+					"entity": "A",
+					"density": 10,
+					"schema": "schema.org",
+					"properties": {
+						"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 93,
+						"https://schema.org/contentUrl": 100,
+						"https://schema.org/encodingFormat": 56,
+						"https://schema.org/license": 23,
+						"https://schema.org/thumbnail": 12
+					}
+				},
+				{
+					"entity": "B",
+					"density": 40,
+					"schema": "schema.org",
+					"properties": {
+						"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 63,
+						"https://schema.org/contentUrl": 86,
+						"https://schema.org/encodingFormat": 46,
+						"https://schema.org/license": 38,
+						"https://schema.org/thumbnail": 34
+					}
+				},
+				{
+					"entity": "C",
+					"density": 20,
+					"schema": "schema.org",
+					"properties": {
+						"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 22,
+						"https://schema.org/contentUrl": 91,
+						"https://schema.org/encodingFormat": 72,
+						"https://schema.org/license": 45,
+						"https://schema.org/thumbnail": 76
+					}
+				},
+				{
+					"entity": "D",
+					"density": 15,
+					"schema": "schema.org",
+					"properties": {
+						"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 98,
+						"https://schema.org/contentUrl": 87,
+						"https://schema.org/encodingFormat": 56,
+						"https://schema.org/license": 82,
+						"https://schema.org/thumbnail": 41
+					}
+				},
+				{
+					"entity": "E",
+					"density": 5,
+					"schema": "schema.org",
+					"properties": {
+						"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 38,
+						"https://schema.org/contentUrl": 81,
+						"https://schema.org/encodingFormat": 47,
+						"https://schema.org/license": 33,
+						"https://schema.org/thumbnail": 12
+					}
+				}
+			]
+		}
+	},
+	{
+		"name": "Nationaal Archief"
+	}]
+}
