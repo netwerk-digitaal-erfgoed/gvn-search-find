@@ -22,19 +22,17 @@
                   <tr>
                     <th>Entity</th>
                     <th>Density</th>
-                    <th>Schema</th>
                     <th>Properties</th>
                   </tr>
                   <tr v-for="(e, no) in dataset.summary.entities" :key="no">
                     <td>{{ e.entity }}</td>
-                    <td>{{ e.density }}</td>
-                    <td>{{ e.schema }}</td>
+                    <td>{{ e.density }}%</td>
                     <td v-if="Object.keys(e.properties).length > 0">
                       <p
                         v-for="[key, value] of Object.entries(e.properties)"
                         :key="key"
                       >
-                        {{ key }}: {{ value }}
+                        {{ key }}: {{ value }}%
                       </p>
                     </td>
                   </tr>

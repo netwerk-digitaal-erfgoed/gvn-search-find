@@ -3,7 +3,7 @@
 		"name": "Museum Rotterdam",
 		"summary": {
 			"entities": [{
-					"entity": "A",
+					"entity": "Creatief werk",
 					"density": 10,
 					"schema": "schema.org",
 					"properties": {
@@ -15,7 +15,7 @@
 					}
 				},
 				{
-					"entity": "B",
+					"entity": "Thesaurus",
 					"density": 40,
 					"schema": "schema.org",
 					"properties": {
@@ -27,7 +27,7 @@
 					}
 				},
 				{
-					"entity": "C",
+					"entity": "Media",
 					"density": 20,
 					"schema": "schema.org",
 					"properties": {
@@ -39,8 +39,8 @@
 					}
 				},
 				{
-					"entity": "D",
-					"density": 15,
+					"entity": "Plaatsen",
+					"density": 30,
 					"schema": "schema.org",
 					"properties": {
 						"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 98,
@@ -48,18 +48,6 @@
 						"https://schema.org/encodingFormat": 56,
 						"https://schema.org/license": 82,
 						"https://schema.org/thumbnail": 41
-					}
-				},
-				{
-					"entity": "E",
-					"density": 5,
-					"schema": "schema.org",
-					"properties": {
-						"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 38,
-						"https://schema.org/contentUrl": 81,
-						"https://schema.org/encodingFormat": 47,
-						"https://schema.org/license": 33,
-						"https://schema.org/thumbnail": 12
 					}
 				}
 			]
