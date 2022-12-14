@@ -9,6 +9,7 @@ export interface Term {
 
 export const searchStore = defineStore('search', () => {
   const selectedObject = ref({});
+  const selectedDataset = ref(false);
 
   function setSelectedTerm(object: Term) {
     selectedObject.value = object;
@@ -18,8 +19,18 @@ export const searchStore = defineStore('search', () => {
     return selectedObject.value;
   }
 
+  function setSelectedDataset() {
+    selectedDataset.value = true; // temp hacky solution
+  }
+
+  function getSelectedDataset() {
+    return selectedDataset.value;
+  }
+
   return {
     setSelectedTerm,
-    getSelectedTerm
+    getSelectedTerm,
+    setSelectedDataset,
+    getSelectedDataset
   };
 });

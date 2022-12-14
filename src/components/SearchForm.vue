@@ -87,11 +87,13 @@ import LoadingSpinnerBar from '@/components/LoadingSpinnerBar.vue';
 
 import { ref, onMounted, type Ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { searchStore } from '@/stores/search.store';
 
 import { Terms } from '@/sdk/terms';
 
 const router = useRouter();
 const route = useRoute();
+const store = searchStore();
 
 const terms: Ref<Array> = ref([]);
 const selectedTerm: Ref<Array> = ref([]); // Currently, it's only possible to select one term at a time.
@@ -115,7 +117,6 @@ function returnMatchingLabel(item: { id: string; matchingLabel: string }) {
 
 function submitSearchTerm(item?: { id: string; matchingLabel: string }) {
   errorMessage.value = '';
-
   if (item) {
     router.replace({
       name: 'search',
@@ -133,7 +134,20 @@ async function selectSearchTerm(id: string) {
   isLoading.value = true;
   await getTermDetails(id);
 
-  emit('showResults', selectedTerm.value); // improve search results retrieval
+  // do not show results immediatly, but first dataset selector
+  // store selected in store
+  store.setSelectedTerm(selectedTerm.value);
+  const dataset = store.getSelectedDataset();
+
+  // go to dataset selector if there isn't one selected
+  if (!dataset) {
+    router.push({
+      name: 'dataset'
+    });
+  } else {
+    // show results
+    emit('showResults', selectedTerm.value); // improve search results retrieval
+  }
 }
 
 function unselectSearchTerm() {

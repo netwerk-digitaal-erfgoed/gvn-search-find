@@ -1,59 +1,66 @@
 <template>
-  <div
-    v-if="Object.keys(datasetSummaries).length > 0"
-    class="search-form-container"
-  >
-    <form class="search-form">
-      <fieldset>
-        <label for="query">Kies één of meer datasets</label>
-        <div class="select-dataset-wrapper">
-          <template v-for="(dataset, index) in datasetSummaries" :key="index">
-            <div class="select-summary">
-              <label>
-                <input type="checkbox" name="dataset" value="" />
-                {{ dataset.name }}
-              </label>
-              <template v-if="dataset.summary">
-                <button class="small summary" @click.prevent="toggleSummary">
-                  Toon/verberg samenvatting
-                  <span class="arrow" />
-                </button>
-                <table v-if="dataset.summary.entities">
-                  <tr>
-                    <th>Entity</th>
-                    <th>Density</th>
-                    <th>Properties</th>
-                  </tr>
-                  <tr v-for="(e, no) in dataset.summary.entities" :key="no">
-                    <td>{{ e.entity }}</td>
-                    <td>{{ e.density }}%</td>
-                    <td v-if="Object.keys(e.properties).length > 0">
-                      <p
-                        v-for="[key, value] of Object.entries(e.properties)"
-                        :key="key"
-                      >
-                        {{ key }}: {{ value }}%
-                      </p>
-                    </td>
-                  </tr>
-                </table>
-              </template>
-            </div>
-          </template>
+  <div>
+    <div
+      v-if="Object.keys(datasetSummaries).length > 0"
+      class="search-form-container"
+    >
+      <form class="search-form">
+        <fieldset>
+          <label for="query">Zoek in één of meer datasets</label>
+          <div class="select-dataset-wrapper">
+            <template v-for="(dataset, index) in datasetSummaries" :key="index">
+              <div class="select-summary">
+                <label>
+                  <input type="checkbox" name="dataset" value="" />
+                  {{ dataset.name }}
+                </label>
+                <template v-if="dataset.summary">
+                  <button class="small summary" @click.prevent="toggleSummary">
+                    Toon/verberg samenvatting
+                    <span class="arrow" />
+                  </button>
+                  <table v-if="dataset.summary.entities">
+                    <tr>
+                      <th>Entity</th>
+                      <th>Density</th>
+                      <th>Properties</th>
+                    </tr>
+                    <tr v-for="(e, no) in dataset.summary.entities" :key="no">
+                      <td>{{ e.entity }}</td>
+                      <td>{{ e.density }}%</td>
+                      <td v-if="Object.keys(e.properties).length > 0">
+                        <p
+                          v-for="[key, value] of Object.entries(e.properties)"
+                          :key="key"
+                        >
+                          {{ key }}: {{ value }}%
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                </template>
+              </div>
+            </template>
+          </div>
+        </fieldset>
+        <div class="buttons">
+          <button class="small orange" @click.prevent="selectDatasets()">
+            Selecteer
+          </button>
         </div>
-      </fieldset>
-      <div class="buttons">
-        <button class="small orange" @click.prevent="selectDatasets()">
-          Selecteer
-        </button>
-      </div>
-    </form>
+      </form>
+    </div>
+    <div class="loader-wrapper">
+      <LoadingSpinnerBar v-if="isLoading" variant="bar" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import LoadingSpinnerBar from '@/components/LoadingSpinnerBar.vue';
 import { useRouter } from 'vue-router';
 import { onMounted, ref } from 'vue';
+import { searchStore } from '@/stores/search.store';
 
 export interface Datasets {
   datasets: Dataset;
@@ -77,11 +84,26 @@ export interface DatasetEntity {
 
 const router = useRouter();
 const datasetSummaries = ref<Datasets>({});
+const store = searchStore();
+
+const selectedTerm = ref();
+const isLoading = ref(false);
 
 function selectDatasets() {
-  router.replace({
-    name: 'search'
-  }); // temp
+  store.setSelectedDataset();
+  isLoading.value = true;
+
+  setTimeout(function () {
+    isLoading.value = false;
+
+    router.replace({
+      name: 'search',
+      query: {
+        query: encodeURIComponent(selectedTerm.value.id),
+        label: selectedTerm.value.matchingLabel
+      }
+    });
+  }, 5000);
 }
 
 function toggleSummary(event: {
@@ -103,7 +125,16 @@ function fetchDatasets() {
 }
 
 onMounted(() => {
-  fetchDatasets();
+  // is there a selected term?
+  const term = store.getSelectedTerm();
+  if (term.id) {
+    selectedTerm.value = term;
+    fetchDatasets();
+  } else {
+    router.push({
+      name: 'search'
+    });
+  }
 });
 </script>
 
@@ -178,5 +209,10 @@ table th {
 table p {
   font-size: 0.75rem;
   margin-bottom: 0;
+}
+
+.loader-wrapper {
+  margin: 0 auto 3rem auto;
+  width: 75vw;
 }
 </style>

@@ -127,11 +127,26 @@ button.small {
   background: var(--vt-c-brown-soft);
 }
 
+.search-form-container.disabled {
+  opacity: 0.25;
+}
+
 .search-form {
   margin: 0 auto 3rem auto;
   font-size: 1.5rem;
   padding: 1.5rem 0;
   width: 75vw;
+}
+
+.search-form .buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.search-form .buttons button:last-child {
+  margin-right: 0;
 }
 
 .search-form fieldset {
