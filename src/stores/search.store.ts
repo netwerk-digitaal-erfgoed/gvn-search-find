@@ -7,10 +7,10 @@ export interface Term {
   prefLabel: string;
 }
 
-export const searchStore = defineStore('search', () => {
-  const selectedObject = ref({});
-  const selectedDataset = ref(false);
+const selectedObject = ref({});
+const selectedDataset = ref([]);
 
+export const searchStore = defineStore('search', () => {
   function setSelectedTerm(object: Term) {
     selectedObject.value = object;
   }
@@ -19,8 +19,8 @@ export const searchStore = defineStore('search', () => {
     return selectedObject.value;
   }
 
-  function setSelectedDataset() {
-    selectedDataset.value = true; // temp hacky solution
+  function setSelectedDataset(datasets: Array<String>) {
+    selectedDataset.value = datasets;
   }
 
   function getSelectedDataset() {

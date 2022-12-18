@@ -6,12 +6,13 @@
     >
       <form class="search-form">
         <fieldset>
-          <label for="query">Zoek in één of meer datasets</label>
+          <label for="query">Zoek naar '{{ selectedTerm.prefLabel }}' in één of meer datasets</label>
+          <p>Er is één dataset gevonden die voldoet aan je zoekvraag.</p>
           <div class="select-dataset-wrapper">
             <template v-for="(dataset, index) in datasetSummaries" :key="index">
               <div class="select-summary">
                 <label>
-                  <input type="checkbox" name="dataset" value="" />
+                  <input type="checkbox" name="dataset" v-model="datasets" :value="dataset.name"/>
                   {{ dataset.name }}
                 </label>
                 <template v-if="dataset.summary">
@@ -44,14 +45,19 @@
           </div>
         </fieldset>
         <div class="buttons">
-          <button class="small orange" @click.prevent="selectDatasets()">
+          <button
+            class="small orange"
+            :disabled="datasets.length === 0 ? true : false"
+            @click.prevent="selectDatasets()"
+          >
             Selecteer
           </button>
         </div>
       </form>
     </div>
-    <div class="loader-wrapper">
-      <LoadingSpinnerBar v-if="isLoading" variant="bar" />
+    <div class="loader-wrapper" v-if="isLoading">
+      <p>De datasets worden voorbereid en klaargezet, dit duurt enkele uren.</p>
+      <LoadingSpinnerBar variant="bar" />
     </div>
   </div>
 </template>
@@ -87,10 +93,11 @@ const datasetSummaries = ref<Datasets>({});
 const store = searchStore();
 
 const selectedTerm = ref();
+const datasets = ref([]);
 const isLoading = ref(false);
 
 function selectDatasets() {
-  store.setSelectedDataset();
+  store.setSelectedDataset(datasets.value);
   isLoading.value = true;
 
   setTimeout(function () {
@@ -127,6 +134,9 @@ function fetchDatasets() {
 onMounted(() => {
   // is there a selected term?
   const term = store.getSelectedTerm();
+  // and is there a selected dataset? 
+  datasets.value = store.getSelectedDataset();
+
   if (term.id) {
     selectedTerm.value = term;
     fetchDatasets();
@@ -141,7 +151,7 @@ onMounted(() => {
 <style scoped>
 .select-dataset-wrapper {
   width: 100%;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .select-dataset-wrapper label {
@@ -209,6 +219,10 @@ table th {
 table p {
   font-size: 0.75rem;
   margin-bottom: 0;
+}
+
+.buttons button:disabled {
+  background-color: #ccc;
 }
 
 .loader-wrapper {

@@ -209,3 +209,23 @@ button.small {
 .text-container.centered {
   text-align: center;
 }
+
+.text-container h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.text-container p,
+.text-container ul {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.text-container a:not(.button) {
+  text-decoration: underline;
+}
+
+.text-container a:hover {
+  text-decoration: none;
+}
