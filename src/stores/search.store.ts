@@ -8,6 +8,7 @@ export interface Term {
 }
 
 const selectedObject = ref({});
+const selectedDatasetKeyword = ref('');
 const selectedDataset = ref([]);
 
 export const searchStore = defineStore('search', () => {
@@ -19,7 +20,15 @@ export const searchStore = defineStore('search', () => {
     return selectedObject.value;
   }
 
-  function setSelectedDataset(datasets: Array<String>) {
+  function setSelectedDatasetKeyword(keyword: string) {
+    selectedDatasetKeyword.value = keyword;
+  }
+
+  function getSelectedDatasetKeyword() {
+    return selectedDatasetKeyword.value;
+  }
+
+  function setSelectedDataset(datasets: Array<string>) {
     selectedDataset.value = datasets;
   }
 
@@ -30,6 +39,8 @@ export const searchStore = defineStore('search', () => {
   return {
     setSelectedTerm,
     getSelectedTerm,
+    setSelectedDatasetKeyword,
+    getSelectedDatasetKeyword,
     setSelectedDataset,
     getSelectedDataset
   };

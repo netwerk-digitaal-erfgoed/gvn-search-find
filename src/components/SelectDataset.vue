@@ -6,13 +6,20 @@
     >
       <form class="search-form">
         <fieldset>
-          <label for="query">Zoek naar '{{ selectedTerm.prefLabel }}' in één of meer datasets</label>
+          <label for="query"
+            >Zoek naar '{{ selectedKeyword }}' in één of meer datasets</label
+          >
           <p>Er is één dataset gevonden die voldoet aan je zoekvraag.</p>
           <div class="select-dataset-wrapper">
             <template v-for="(dataset, index) in datasetSummaries" :key="index">
               <div class="select-summary">
                 <label>
-                  <input type="checkbox" name="dataset" v-model="datasets" :value="dataset.name"/>
+                  <input
+                    type="checkbox"
+                    name="dataset"
+                    v-model="datasets"
+                    :value="dataset.name"
+                  />
                   {{ dataset.name }}
                 </label>
                 <template v-if="dataset.summary">
@@ -56,7 +63,10 @@
       </form>
     </div>
     <div class="loader-wrapper" v-if="isLoading">
-      <p>De datasets worden voorbereid en klaargezet, dit duurt enkele uren.</p>
+      <p>
+        De datasets worden doorzoekbaar gemaakt. Afhankelijk van de datasets kan
+        dit een tijd in beslag nemen, mogelijk enkele uren.
+      </p>
       <LoadingSpinnerBar variant="bar" />
     </div>
   </div>
@@ -92,7 +102,7 @@ const router = useRouter();
 const datasetSummaries = ref<Datasets>({});
 const store = searchStore();
 
-const selectedTerm = ref();
+const selectedKeyword = ref('');
 const datasets = ref([]);
 const isLoading = ref(false);
 
@@ -104,11 +114,7 @@ function selectDatasets() {
     isLoading.value = false;
 
     router.replace({
-      name: 'search',
-      query: {
-        query: encodeURIComponent(selectedTerm.value.id),
-        label: selectedTerm.value.matchingLabel
-      }
+      name: 'search'
     });
   }, 5000);
 }
@@ -132,13 +138,13 @@ function fetchDatasets() {
 }
 
 onMounted(() => {
-  // is there a selected term?
-  const term = store.getSelectedTerm();
-  // and is there a selected dataset? 
+  // is there a dataset search keyword?
+  const keyword = store.getSelectedDatasetKeyword();
+  selectedKeyword.value = keyword;
+  // and is there a selected dataset?
   datasets.value = store.getSelectedDataset();
 
-  if (term.id) {
-    selectedTerm.value = term;
+  if (keyword) {
     fetchDatasets();
   } else {
     router.push({
@@ -228,5 +234,9 @@ table p {
 .loader-wrapper {
   margin: 0 auto 3rem auto;
   width: 75vw;
+}
+
+.loader-wrapper p {
+  font-size: 0.875rem;
 }
 </style>
