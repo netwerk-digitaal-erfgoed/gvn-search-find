@@ -97,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, type Ref, toRefs } from 'vue';
+import { computed, ref, onMounted, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
 import { ProgressiveImage } from 'vue-progressive-image';
 
@@ -145,6 +145,11 @@ export interface Props {
   related?: Array<string>;
 }
 
+export interface RelatedTerm {
+  id: string;
+  prefLabel: string;
+}
+
 const props = withDefaults(defineProps<Props>(), {
   related: () => []
 });
@@ -153,8 +158,8 @@ const { details, related } = toRefs(props);
 const router = useRouter();
 const terms = new Terms();
 const heritageObjects = new HeritageObjects();
-const relatedTerms: Ref<Array> = ref([]);
-const relatedObjects: Ref<Array> = ref([]);
+const relatedTerms = ref<Array<RelatedTerm>>([]);
+const relatedObjects = ref<Array<HeritageObject>>([]);
 
 const isLoadingTerms = ref(false);
 

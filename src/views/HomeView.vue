@@ -67,6 +67,8 @@ const resultsForPage = computed(() => {
 });
 
 async function callbackShowResults(selected: { id: string }) {
+  console.log('callbackShowResults', selected);
+
   selectedTerm.value = selected;
   searchResults.value = [];
   isLoading.value = true;

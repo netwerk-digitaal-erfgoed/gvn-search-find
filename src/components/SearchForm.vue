@@ -5,7 +5,26 @@
     </div>
     <form class="search-form">
       <fieldset>
-        <label for="query">Zoek naar informatie over</label>
+        <template v-if="!isLoading">
+          <label
+            v-if="!hasSelectedDataset"
+            for="query"
+          >
+              Zoek naar datasets met informatie over
+          </label>
+          <template v-else>
+            <label
+              for="query"
+            >
+                Zoek naar informatie in de 
+                <span v-if="selectedDatasets.length > 1">datasets</span>
+                <span v-else>dataset</span>
+                van
+                {{ selectedDatasets.join(', ')}}
+            </label>
+            <router-link to="/dataset" class="dataset-selector">AANPASSEN</router-link>
+          </template>
+        </template>
         <div class="search-field-wrapper">
           <div class="search-field">
             <LoadingSpinnerBar v-if="isLoading" />
@@ -34,7 +53,10 @@
                 <span v-if="!selectedTerm.matchingLabel">
                   {{ selectedTerm.prefLabel }}
                 </span>
-                <span class="remove">x</span>
+                <span v-if="selectedTerm.altLabel && selectedTerm.altLabel.length > 0" class="alt">
+                  &nbsp;({{ selectedTerm.altLabel.join(', ') }})
+                </span>
+                <img src="@/assets/close-button.svg" class="remove"/>
               </button>
             </div>
           </div>
@@ -87,11 +109,13 @@ import LoadingSpinnerBar from '@/components/LoadingSpinnerBar.vue';
 
 import { ref, onMounted, type Ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { searchStore } from '@/stores/search.store';
 
 import { Terms } from '@/sdk/terms';
 
 const router = useRouter();
 const route = useRoute();
+const store = searchStore();
 
 const terms: Ref<Array> = ref([]);
 const selectedTerm: Ref<Array> = ref([]); // Currently, it's only possible to select one term at a time.
@@ -99,6 +123,8 @@ const searchInputRef = ref([]);
 const currentInput = ref('');
 const isLoading = ref(false);
 const errorMessage = ref('');
+const hasSelectedDataset = ref(false);
+const selectedDatasets = ref([]);
 
 const termsFromSDK = new Terms();
 
@@ -115,7 +141,6 @@ function returnMatchingLabel(item: { id: string; matchingLabel: string }) {
 
 function submitSearchTerm(item?: { id: string; matchingLabel: string }) {
   errorMessage.value = '';
-
   if (item) {
     router.replace({
       name: 'search',
@@ -133,7 +158,22 @@ async function selectSearchTerm(id: string) {
   isLoading.value = true;
   await getTermDetails(id);
 
-  emit('showResults', selectedTerm.value); // improve search results retrieval
+  // do not show results immediatly, but first dataset selector
+  // store selected in store
+  store.setSelectedTerm(selectedTerm.value);
+  const datasets = store.getSelectedDataset();
+  selectedDatasets.value = datasets;
+  
+  // go to dataset selector if there isn't one selected
+  if (datasets.length === 0) {
+    router.push({
+      name: 'dataset'
+    });
+  } else {
+    hasSelectedDataset.value = true;
+    // show results
+    emit('showResults', selectedTerm.value); // improve search results retrieval
+  }
 }
 
 function unselectSearchTerm() {
@@ -206,6 +246,14 @@ input[type='submit'] {
   width: 100%;
 }
 
+.remove{
+  width: 1.5rem;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  margin-left: 0.25rem;
+  margin-top: 0.25rem;
+}
+
 .selected-terms {
   font-size: 1rem;
   line-height: 1;
@@ -215,6 +263,7 @@ input[type='submit'] {
   position: absolute;
   top: 0.2rem;
   left: 0.2rem;
+  max-width: calc(100% - 1rem);
 }
 
 .search-field-wrapper .selected-terms button {
@@ -222,6 +271,8 @@ input[type='submit'] {
   padding: 0.5rem 1rem;
   line-height: 1.25;
   border: 1px solid var(--vt-c-orange);
+  display: inline-flex;
+  align-items: center;
 }
 
 .selected-terms button {
@@ -232,17 +283,12 @@ input[type='submit'] {
   margin-bottom: 0.5rem;
 }
 
-.selected-terms button span.remove {
-  border-radius: 50%;
-  background-color: var(--vt-c-orange);
-  width: 16px;
-  height: 16px;
-  font-size: 1rem;
-  line-height: 15px;
+.selected-terms button span.alt {
   display: inline-block;
-  text-align: center;
-  margin-top: 0.5rem;
-  margin-left: 0.5rem;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .search-field {
@@ -259,6 +305,12 @@ div#searching_wrapper.simple-typeahead :deep(input:disabled) {
   background: #fff;
 }
 
+a.dataset-selector {
+  font-size: 0.875rem;
+  margin-left: 0.75rem;
+  text-transform: uppercase;
+}
+
 .related button {
   font-size: 0.85rem;
 }
@@ -272,4 +324,6 @@ select {
   margin-bottom: 0.5rem;
   width: 100%;
 }
+
+
 </style>
