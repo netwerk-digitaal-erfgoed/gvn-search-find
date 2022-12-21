@@ -1,56 +1,37 @@
 {
 	"datasets": [{
 		"name": "Museum Rotterdam",
-		"summary": {
-			"entities": [{
-					"entity": "Creatief werk",
-					"density": 10,
-					"schema": "schema.org",
-					"properties": {
-						"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 93,
-						"https://schema.org/contentUrl": 100,
-						"https://schema.org/encodingFormat": 56,
-						"https://schema.org/license": 23,
-						"https://schema.org/thumbnail": 12
-					}
-				},
-				{
-					"entity": "Thesaurus",
-					"density": 40,
-					"schema": "schema.org",
-					"properties": {
-						"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 63,
-						"https://schema.org/contentUrl": 86,
-						"https://schema.org/encodingFormat": 46,
-						"https://schema.org/license": 38,
-						"https://schema.org/thumbnail": 34
-					}
-				},
-				{
-					"entity": "Media",
-					"density": 20,
-					"schema": "schema.org",
-					"properties": {
-						"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 22,
-						"https://schema.org/contentUrl": 91,
-						"https://schema.org/encodingFormat": 72,
-						"https://schema.org/license": 45,
-						"https://schema.org/thumbnail": 76
-					}
-				},
-				{
-					"entity": "Plaatsen",
-					"density": 30,
-					"schema": "schema.org",
-					"properties": {
-						"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": 98,
-						"https://schema.org/contentUrl": 87,
-						"https://schema.org/encodingFormat": 56,
-						"https://schema.org/license": 82,
-						"https://schema.org/thumbnail": 41
-					}
-				}
-			]
-		}
+		"description": "De collectie van Museum Rotterdam telt meer dan honderdduizend voorwerpen van de meest uiteenlopende aard, van penningen en munten tot aan stijlkamers, van speelgoed tot aan tegels en beeldhouwwerk.",
+		"total": "52222"
+	},
+	{
+		"name": "Archief Eemland",
+		"description": "Archieven van Amersfoort en acht andere gemeenten uit de regio Eemland.",
+		"total": "39259"
+	},
+	{
+		"name": "Deventer Musea",
+		"description": "Collectie met onder meer uit schilderijen, tekeningen en grafiek, bodemvondsten en bouwkundige objecten.",
+		"total": "38972"
+	},
+	{
+		"name": "Slot Loevestein",
+		"description": "De collectie bestaat voor het grootste gedeelte uit archeologica en bodemvondsten, die gevonden zijn binnen de vesting.",
+		"total": "9457"
+	},
+	{
+		"name": "Universiteitsmuseum Utrecht",
+		"description": "Een uiteenlopende verzameling: van opgezette dieren en skeletten tot natuurwetenschappelijke instrumenten en van wasmoulages uit het geneeskundig onderwijs tot fossiele schelpen uit de paleontologische collectie.",
+		"total": "4519"
+	},
+	{
+		"name": "Stadsmuseum Harderwijk",
+		"description": "Kunst en geschiedenis",
+		"total": "1936"
+	},
+	{
+		"name": "Nationaal Onderwijsmuseum",
+		"description": "Voorwerpen die op de één of andere manier iets met onderwijs te maken hebben.",
+		"total": "150"
 	}]
 }

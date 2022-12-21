@@ -9,7 +9,10 @@
           <label for="query"
             >Zoek naar '{{ selectedKeyword }}' in één of meer datasets</label
           >
-          <p>Er is één dataset gevonden die voldoet aan je zoekvraag.</p>
+          <p>
+            Er zijn {{ Object.keys(datasetSummaries).length }} datasets gevonden
+            die voldoet aan je zoekvraag.
+          </p>
           <div class="select-dataset-wrapper">
             <template v-for="(dataset, index) in datasetSummaries" :key="index">
               <div class="select-summary">
@@ -22,30 +25,23 @@
                   />
                   {{ dataset.name }}
                 </label>
-                <template v-if="dataset.summary">
+                <template v-if="dataset.description">
                   <button class="small summary" @click.prevent="toggleSummary">
                     Toon/verberg samenvatting
                     <span class="arrow" />
                   </button>
-                  <table v-if="dataset.summary.entities">
-                    <tr>
-                      <th>Entity</th>
-                      <th>Density</th>
-                      <th>Properties</th>
-                    </tr>
-                    <tr v-for="(e, no) in dataset.summary.entities" :key="no">
-                      <td>{{ e.entity }}</td>
-                      <td>{{ e.density }}%</td>
-                      <td v-if="Object.keys(e.properties).length > 0">
-                        <p
-                          v-for="[key, value] of Object.entries(e.properties)"
-                          :key="key"
-                        >
-                          {{ key }}: {{ value }}%
-                        </p>
-                      </td>
-                    </tr>
-                  </table>
+                  <div class="panel">
+                    <p>
+                      {{
+                        Math.floor(
+                          Math.random() * (Number(dataset.total) - 1) + 1
+                        ).toLocaleString()
+                      }}
+                      resultaten gevonden voor '{{ selectedKeyword }}' in
+                      {{ Number(dataset.total).toLocaleString() }} resultaten.
+                    </p>
+                    <p>{{ dataset.description }}</p>
+                  </div>
                 </template>
               </div>
             </template>
@@ -84,18 +80,8 @@ export interface Datasets {
 
 export interface Dataset {
   name: string;
-  summary?: DatasetSummary;
-}
-
-export interface DatasetSummary {
-  entities: Array<DatasetEntity>;
-}
-
-export interface DatasetEntity {
-  entity: string;
-  density: number;
-  schema: string;
-  properties: object;
+  description?: string;
+  total?: number;
 }
 
 const router = useRouter();
@@ -197,33 +183,29 @@ button.summary.show::after {
   -webkit-transform: rotate(-135deg);
 }
 
-table {
+.panel {
   display: none;
 }
 
-table.show {
+.panel.show {
   width: 100%;
   display: table;
 }
 
-table tr td {
+.panel {
   background: rgba(255, 255, 255, 0.7);
-}
-
-table th,
-table td {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   padding: 0.5rem 1rem;
-  text-align: left;
-  vertical-align: top;
+  margin-top: 1rem;
 }
 
-table th {
-  font-weight: bold;
+.panel p {
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25;
 }
 
-table p {
-  font-size: 0.75rem;
+.panel p:last-child {
   margin-bottom: 0;
 }
 

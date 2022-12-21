@@ -2,7 +2,9 @@
   <div>
     <SearchForm :form-setup="formSetup" @show-results="callbackShowResults" />
     <LoadingSpinnerBar v-if="isLoading" variant="bar" class="no-results" />
-    <template v-if="searchResults.length > 0">
+    <template
+      v-if="searchResults.length > 0 && Object.keys(selectedTerm).length > 1"
+    >
       <SearchResults
         :search-results="resultsForPage"
         :number-of-results="searchResults.length"
@@ -67,8 +69,6 @@ const resultsForPage = computed(() => {
 });
 
 async function callbackShowResults(selected: { id: string }) {
-  console.log('callbackShowResults', selected);
-
   selectedTerm.value = selected;
   searchResults.value = [];
   isLoading.value = true;

@@ -20,6 +20,7 @@ const route = useRoute();
 .logo {
   display: block;
   margin-bottom: 2rem;
+  margin-top: 1rem;
 }
 
 @media (min-width: 1024px) {
