@@ -282,7 +282,7 @@ onMounted(async () => {
 
 .object-metadata table tr th,
 .object-metadata table tr td {
-  border-bottom: 1px solid black;
+  border-bottom: 0.5px solid black;
   padding: 0.5rem 0;
   text-align: left;
   vertical-align: top;

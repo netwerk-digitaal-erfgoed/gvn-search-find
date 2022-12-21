@@ -142,7 +142,6 @@ function returnMatchingLabel(item: { id: string; matchingLabel: string }) {
 }
 
 function submitDatasetSearch() {
-  console.log('submitDatasetSearch', datasetSearchTerm.value);
   store.setSelectedDatasetKeyword(datasetSearchTerm.value);
   router.push({
     name: 'dataset'
@@ -213,14 +212,20 @@ async function getSuggestions(item: { input: string }) {
 }
 
 onMounted(() => {
+  // todo: move these checks to the parent component?
   // dataset selected?
   if (store.getSelectedDataset().length > 0) {
     hasSelectedDataset.value = true;
     selectedDatasets.value = store.getSelectedDataset();
-  }
 
-  if (route.query.query && route.query.query !== 'undefined') {
-    selectSearchTerm(decodeURIComponent(route.query.query as string)); // move to parent component?
+    // term selected?
+    if (route.query.query && route.query.query !== 'undefined') {
+      selectSearchTerm(decodeURIComponent(route.query.query as string)); // move to parent component?
+    }
+  } else {
+    router.replace({
+      name: 'search'
+    });
   }
 });
 </script>
@@ -252,6 +257,8 @@ input[type='text'] {
   padding: 0.25rem;
   border-radius: 0.25rem;
   width: 100%;
+  margin-top: 1rem;
+  line-height: 2.25;
 }
 
 .remove {
