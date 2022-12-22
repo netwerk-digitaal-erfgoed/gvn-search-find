@@ -113,6 +113,13 @@ export interface Image {
   encodingFormat: string;
 }
 
+export interface ImageAndThumbnail {
+  contentUrl: string;
+  license: License;
+  encodingFormat: string;
+  thumbnail: Image;
+}
+
 export interface Publisher {
   id: string;
   name: string;
@@ -132,7 +139,7 @@ export interface HeritageObject {
   id: string;
   name: string;
   description: string;
-  image: Image;
+  image: ImageAndThumbnail;
   publisher: Publisher;
   dateCreated: string;
   contentLocation: Location;

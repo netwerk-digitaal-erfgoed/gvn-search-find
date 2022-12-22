@@ -1,17 +1,19 @@
 <template>
   <div>
     <div
-      v-if="Object.keys(datasetSummaries).length > 0 && !isLoading"
+      v-if="
+        Object.keys(datasetSummaries).length > 0 && !isLoading && !datasetReady
+      "
       class="search-form-container"
     >
       <form class="search-form">
         <fieldset>
           <label for="query"
-            >Zoek naar '{{ selectedKeyword }}' in één of meer datasets</label
+            >Zoek datasets bij het thema '{{ selectedKeyword }}'</label
           >
           <p>
             Er zijn {{ Object.keys(datasetSummaries).length }} datasets gevonden
-            die voldoet aan je zoekvraag.
+            die voldoen aan je zoekvraag.
           </p>
           <div class="select-dataset-wrapper">
             <template v-for="(dataset, index) in datasetSummaries" :key="index">
@@ -57,12 +59,25 @@
         </div>
       </form>
     </div>
-    <div class="loader-wrapper" v-if="isLoading">
+    <div
+      class="loader-wrapper"
+      v-if="isLoading || (!isLoading && datasetReady)"
+    >
       <p>
-        De datasets worden doorzoekbaar gemaakt. Afhankelijk van de datasets kan
-        dit een tijd in beslag nemen, mogelijk enkele uren.
+        De datasets worden doorzoekbaar gemaakt.<br />
+        Afhankelijk van de datasets kan dit een tijd in beslag nemen, mogelijk
+        enkele uren.
       </p>
       <LoadingSpinnerBar variant="bar" />
+      <div class="buttons">
+        <button
+          class="small orange"
+          :disabled="!datasetReady ? true : false"
+          @click.prevent="startSearch()"
+        >
+          Datasets staan klaar
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -90,6 +105,7 @@ const store = searchStore();
 const selectedKeyword = ref('');
 const datasets = ref([]);
 const isLoading = ref(false);
+const datasetReady = ref(false);
 
 function selectDatasets() {
   store.setSelectedDataset(datasets.value);
@@ -97,11 +113,14 @@ function selectDatasets() {
 
   setTimeout(function () {
     isLoading.value = false;
+    datasetReady.value = true;
+  }, 10000);
+}
 
-    router.replace({
-      name: 'search'
-    });
-  }, 5000);
+function startSearch() {
+  router.replace({
+    name: 'search'
+  });
 }
 
 function toggleSummary(event: {
@@ -183,6 +202,10 @@ button.summary.show::after {
 }
 
 .panel {
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
   display: none;
 }
 
@@ -191,17 +214,11 @@ button.summary.show::after {
   display: table;
 }
 
-.panel {
-  background: rgba(255, 255, 255, 0.7);
-  font-size: 0.875rem;
-  padding: 0.5rem 1rem;
-  margin-top: 1rem;
-}
-
 .panel p {
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
   line-height: 1.25;
+  max-width: 75%;
 }
 
 .panel p:last-child {
@@ -218,6 +235,14 @@ button.summary.show::after {
 }
 
 .loader-wrapper p {
-  font-size: 0.875rem;
+  max-width: 75%;
+}
+
+.loader-wrapper .buttons {
+  margin-top: 2rem;
+}
+
+.loader-wrapper .buttons button {
+  margin-right: 0;
 }
 </style>

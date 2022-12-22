@@ -14,7 +14,7 @@
       <li>
         Het prototype
         <a
-          href="https://heritageflix.demo.netwerkdigitaalerfgoed.nl"
+          href="https://heritageflix-churches.demo.netwerkdigitaalerfgoed.nl/"
           target="_blank"
           >HeritageFlix</a
         >

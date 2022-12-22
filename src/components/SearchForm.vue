@@ -5,12 +5,13 @@
     </div>
     <form class="search-form" @submit.prevent>
       <fieldset v-if="!hasSelectedDataset">
-        <label for="query"> Zoek naar datasets met informatie over </label>
+        <label for="query"> Zoek naar datasets over het thema</label>
         <div class="search-field-wrapper">
           <div class="search-field">
             <input
               type="text"
               v-model="datasetSearchTerm"
+              placeholder="Bijvoorbeeld 'Familie' of 'Wonen'"
               @keyup.enter="submitDatasetSearch"
             />
           </div>
@@ -18,16 +19,17 @@
       </fieldset>
       <template v-else>
         <fieldset>
-          <label for="query">
-            Zoek naar informatie in de
+          <label for="query" class="label-term">
+            Zoek naar informatie bij het thema '{{ selectedDatasetKeyword }}' in
+            de
             <span v-if="selectedDatasets.length > 1">datasets</span>
             <span v-else>dataset</span>
             van
             {{ selectedDatasets.join(', ') }}
+            <router-link to="/dataset" class="dataset-selector"
+              >AANPASSEN</router-link
+            >
           </label>
-          <router-link to="/dataset" class="dataset-selector"
-            >AANPASSEN</router-link
-          >
           <div class="search-field-wrapper">
             <div class="search-field">
               <LoadingSpinnerBar v-if="isLoading" />
@@ -127,6 +129,7 @@ const isLoading = ref(false);
 const errorMessage = ref('');
 const hasSelectedDataset = ref(false);
 const selectedDatasets = ref([]);
+const selectedDatasetKeyword = ref('');
 
 const termsFromSDK = new Terms();
 
@@ -217,6 +220,7 @@ onMounted(() => {
   if (store.getSelectedDataset().length > 0) {
     hasSelectedDataset.value = true;
     selectedDatasets.value = store.getSelectedDataset();
+    selectedDatasetKeyword.value = store.getSelectedDatasetKeyword();
 
     // term selected?
     if (route.query.query && route.query.query !== 'undefined') {
@@ -249,6 +253,11 @@ input[type='text'] {
   width: 100%;
   margin-right: 0;
   border: 0;
+}
+
+.label-term {
+  display: inline-block;
+  max-width: 70%;
 }
 
 .search-field-wrapper {
