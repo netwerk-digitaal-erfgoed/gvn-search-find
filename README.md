@@ -1,6 +1,6 @@
 # Geheugen van Nederland / Zoek en vind
 
-[TODO] Brief description
+This prototype explores the possibilities of uniformly searching in structured data of digital heritage collections. An end user selects datasets and searches for heritage objects in these datasets using a term-based search functionality.
 
 ## Project Setup
 
