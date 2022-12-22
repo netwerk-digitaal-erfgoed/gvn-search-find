@@ -1,5 +1,9 @@
 # Geheugen van Nederland / Zoek en vind
 
+This prototype is one of three experiments developed in the NDE project 'Koppelvlak Zichtbaar-Bruikbaar'. The experiments aim to gather knowledge on how the NDE infrastructure - developed in the domain area 'Bruikbaar' - is implemented by user applications.
+
+We deliberately kept the scope of the prototypes very limited. During construction, the developers mainly chose to test the interaction between web applications and infrastructure. It means that the prototypes may need more basic user functionality.
+
 This prototype explores the possibilities of uniformly searching in structured data of digital heritage collections. An end user selects datasets and searches for heritage objects in these datasets using a term-based search functionality.
 
 ## Project Setup
