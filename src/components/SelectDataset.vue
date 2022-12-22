@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      v-if="Object.keys(datasetSummaries).length > 0"
+      v-if="Object.keys(datasetSummaries).length > 0 && !isLoading"
       class="search-form-container"
     >
       <form class="search-form">
@@ -32,10 +32,9 @@
                   </button>
                   <div class="panel">
                     <p>
+                      <!-- random "mocked" number -->
                       {{
-                        Math.floor(
-                          Math.random() * (Number(dataset.total) - 1) + 1
-                        ).toLocaleString()
+                        Math.floor(Number(dataset.total) / 12).toLocaleString()
                       }}
                       resultaten gevonden voor '{{ selectedKeyword }}' in
                       {{ Number(dataset.total).toLocaleString() }} resultaten.
