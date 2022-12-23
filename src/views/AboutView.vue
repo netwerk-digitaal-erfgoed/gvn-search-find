@@ -12,13 +12,18 @@
     <h2>Prototypes</h2>
     <ul>
       <li>
-        Het prototype
+        Het prototype HeritageFlix heeft twee applicaties getest die gericht
+        zijn op het grote publiek. De eerste applicatie gaat over
+        <a
+          href="https://heritageflix-paintings.demo.netwerkdigitaalerfgoed.nl/"
+          target="_blank"
+          >schilderijen</a
+        >, de tweede applicatie over
         <a
           href="https://heritageflix.demo.netwerkdigitaalerfgoed.nl"
           target="_blank"
-          >HeritageFlix</a
-        >
-        heeft een applicatie getest die is gericht op het grote publiek.
+          >kerken</a
+        >.
       </li>
       <li>
         Het prototype
