@@ -11,7 +11,8 @@
           <label for="query"
             >Zoek datasets bij het thema '{{ selectedKeyword }}'</label
           >
-          <p><em>Let op: in dit prototype is op dit moment alleen de dataset van het Museum Rotterdom beschikbaar!</em></p>
+          </br>
+          <p><em>Let op: in dit prototype is op dit moment alleen de dataset van het Museum Rotterdam beschikbaar!</em></p>
           <p>
             Er zijn {{ Object.keys(datasetSummaries).length }} datasets gevonden
             die voldoen aan je zoekvraag.
