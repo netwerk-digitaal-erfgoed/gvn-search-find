@@ -53,25 +53,16 @@
     </p>
     <h2>Prototype Geheugen van Nederland</h2>
     <p>
-      Dit prototype onderzoekt de mogelijkheden om op uniforme wijze te zoeken
-      in gestructureerde gegevens van digitale erfgoedcollecties. Een
-      eindgebruiker zoekt naar erfgoedobjecten met behulp van een
-      zoekfunctionaliteit op basis van termen.
+Dit prototype onderzoekt de mogelijkheden om op uniforme wijze te zoeken in gestructureerde gegevens van digitale erfgoedcollecties. Een eindgebruiker zoekt naar erfgoedobjecten met behulp van een zoekfunctionaliteit op basis van termen.
     </p>
     <p>
-      In de huidige versie van dit prototype zoekt de eindgebruiker aan de hand
-      van één termenlijst, de cultuurhistorische thesaurus van de Rijksdienst
-      voor het Cultureel Erfgoed. De lijst van termen in de zoekfunctionaliteit
-      bestaat enkel uit termen waaraan objecten gekoppeld zijn. Dat betekent dat
-      ogenschijnlijk vanzelfsprekende termen als “koffie” niet voorkomen. De
-      eindgebruiker vindt resultaten uit één collectie, die gebaseerd is op die
-      van Museum Rotterdam.
+In de huidige versie van dit prototype zoekt de eindgebruiker in één collectie, die van Museum Rotterdam. In de applicatie is een demo opgenomen waarmee meerdere collecties geselecteerd kunnen worden. Deze functionaliteit is een voorbeeld van de manier waarop we de toepassing in de toekomst zien werken. Op dit moment functioneert de selectie niet, en de gebruiker zoekt dus altijd in de collectie van Museum Rotterdam.
     </p>
     <p>
-      De snelheid van het zoeken en tonen van resultaten is in deze versie nog
-      niet geoptimaliseerd. Dat betekent dat de eindgebruiker soms moet wachten
-      na een zoekvraag. Bij algemene termen, zoals “meubilair” kan het voorkomen
-      dat zoeken een foutmelding geeft.
+Daarnaast werkt het zoeken in de applicatie aan de hand van één termenlijst, de cultuurhistorische thesaurus van de Rijksdienst voor het Cultureel Erfgoed. De lijst van termen in de zoekfunctionaliteit bestaat enkel uit termen waaraan objecten gekoppeld zijn. Dat betekent dat ogenschijnlijk vanzelfsprekende termen als “koffie” niet voorkomen omdat ze niet gebruikt zijn in de collectie van Museum Rotterdam.
+    </p>
+    <p>
+De snelheid van het zoeken en tonen van resultaten is in deze versie nog niet geoptimaliseerd. Dat betekent dat de eindgebruiker soms moet wachten na een zoekvraag. Bij algemene termen, zoals “meubilair” kan het voorkomen dat zoeken een foutmelding geeft.    
     </p>
     <h2>Vervolg</h2>
     <p>
