@@ -36,18 +36,3 @@ jobs:
           tags: |
             ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.sha_short }}
             ${{ steps.vars.outputs.docker_image }}:latest
-
-      - uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: Store DigitalOcean credentials
-        run: doctl kubernetes cluster kubeconfig save nde
-
-      - name: Update deployment
-        run: |
-          kubectl set image deployment/gvn-search-find app=${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.sha_short }} --record
-
-      - name: Verify deployment
-        run: |
-          kubectl rollout status deployment/gvn-search-find
